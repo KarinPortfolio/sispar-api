@@ -1,0 +1,25 @@
+tags:
+  - Colaborador
+description: Atualiza os dados de um colaborador da base de dados
+
+parameters:
+  - in: path
+    name: id_colaborador
+    required: true
+    schema:
+      type: number
+    description: ID do colaborador a ser atualizado
+
+  - in: body
+    name: corpo
+    required: true
+
+    schema:
+      type: object
+put:
+  200:
+    description: Dados do colaborador atualizados com sucesso
+  400:
+    description: Erro na requisição
+  500:
+    description: Erro inesperado ao processar a requisição

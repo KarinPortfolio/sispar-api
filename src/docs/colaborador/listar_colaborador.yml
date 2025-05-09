@@ -1,0 +1,8 @@
+tags:
+  - Colaborador
+description: Lista os colaboradores cadastrados no sistema
+get:
+  200:
+    description: Requisição processada com sucesso
+  500:
+    description: Erro inesperado ao processar a requisição

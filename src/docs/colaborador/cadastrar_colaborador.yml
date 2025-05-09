@@ -1,0 +1,41 @@
+tags:
+  - Colaborador
+description: Endpoint (rota) para cadastrar um novo colaborador
+
+parameters:
+  - in: body
+    name: corpo
+    required: true
+
+    schema:
+      type: object
+      properties:
+        nome:
+          type: string
+          example: Testador
+        email:
+          type: string
+          example: teste@email.com
+        cargo:
+          type: string
+          example: qa
+        senha:
+          type: string
+          example: 123456
+        salario:
+          type: number
+          example: 2200.30
+      required:
+        - nome
+        - email
+        - senha
+        - cargo
+        - salario
+
+responses:
+  201:
+    description: Colaborador cadastrado com sucesso
+  400:
+    description: Erro no lado do cliente
+  500:
+    description: Erro no lado do servidor
