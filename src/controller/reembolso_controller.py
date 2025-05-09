@@ -44,39 +44,30 @@ def buscar_por_nprestacao(num_prestacao):
 def solicitar_novo_reembolso():
     try:
         listar_solicitacao = request.get_json()
-
-        # Validar
-        if not listar_solicitacao:
-            return jsonify({'erro': 'A lista está vazia.'}), 400
-
         objetos_solicitacao = []
         for dados_solicitacao in listar_solicitacao:
-            if not all(key in dados_solicitacao for key in ['colaborador', 'empresa', 'num_prestacao', 'descricao', 'data', 'tipo_reembolso', 'centro_custo', 'ordem_interna', 'divisao', 'pep', 'moeda', 'distancia_km', 'valor_km', 'valor_faturado', 'despesa', 'id_colaborador']):
-                return jsonify({'erro': f'Faltando dados obrigatórios para o colaborador {dados_solicitacao["colaborador"]}'}), 400
-            
             try:
                 data_obj = datetime.datetime.strptime(dados_solicitacao['data'], '%Y-%m-%d').date()
             except ValueError:
-                return jsonify({'erro': f'Formato de data inválido para o colaborador {dados_solicitacao["colaborador"]}. Use o formato AAAA-MM-DD.'}), 400
-            
+                data_obj = None  # Ou outra forma de lidar com data inválida
 
             nova_solicitacao = Reembolso(
-                colaborador=dados_solicitacao['colaborador'],
-                empresa=dados_solicitacao['empresa'],
-                num_prestacao=dados_solicitacao['num_prestacao'],
-                descricao=dados_solicitacao['descricao'],
+                colaborador=dados_solicitacao.get('colaborador'),
+                empresa=dados_solicitacao.get('empresa'),
+                num_prestacao=dados_solicitacao.get('num_prestacao'),
+                descricao=dados_solicitacao.get('descricao'),
                 data=data_obj,
-                tipo_reembolso=dados_solicitacao['tipo_reembolso'],
-                centro_custo=dados_solicitacao['centro_custo'],
-                ordem_interna=dados_solicitacao['ordem_interna'],
-                divisao=dados_solicitacao['divisao'],
-                pep=dados_solicitacao['pep'],
-                moeda=dados_solicitacao['moeda'],
-                distancia_km=dados_solicitacao['distancia_km'],
-                valor_km=dados_solicitacao['valor_km'],
-                valor_faturado=dados_solicitacao['valor_faturado'],
-                despesa=dados_solicitacao['despesa'],
-                id_colaborador=dados_solicitacao['id_colaborador'],
+                tipo_reembolso=dados_solicitacao.get('tipo_reembolso'),
+                centro_custo=dados_solicitacao.get('centro_custo'),
+                ordem_interna=dados_solicitacao.get('ordem_interna'),
+                divisao=dados_solicitacao.get('divisao'),
+                pep=dados_solicitacao.get('pep'),
+                moeda=dados_solicitacao.get('moeda'),
+                distancia_km=dados_solicitacao.get('distancia_km'),
+                valor_km=dados_solicitacao.get('valor_km'),
+                valor_faturado=dados_solicitacao.get('valor_faturado'),
+                despesa=dados_solicitacao.get('despesa'),
+                id_colaborador=dados_solicitacao.get('id_colaborador'),
                 status='analisando',
             )
             objetos_solicitacao.append(nova_solicitacao)
@@ -95,19 +86,16 @@ def solicitar_novo_reembolso():
     except Exception as erro:
         db.session.rollback()
         return jsonify({'erro': 'Erro inesperado ao processar a requisição', 'detalhes': str(erro)}), 500
+
 @bp_reembolso.route('<int:id>')
 def buscar_por_id_colaborador(id):
-    
     try:
         reembolsos = db.session.execute(
             db.select(Reembolso).where(Reembolso.id_colaborador == id)
         ).scalars().all()
-        
-        if not reembolsos:
-            return jsonify({'error': 'Não há reembolsos desse ID de Colaborador'}), 404
-        
+
         reembolsos = [ reembolso.all_data() for reembolso in reembolsos ]
-        
+
         return jsonify(reembolsos), 200
     except Exception as error:
         return jsonify({'error': 'Erro inesperado ao processar a requisição ', 'detalhes': str(error)}), 500
@@ -118,8 +106,6 @@ def deletar_por_id(id):
         reembolso = db.session.execute(
             db.select(Reembolso).where(Reembolso.id == id)
         ).scalar()
-        if not reembolso:
-            return jsonify({'erro': 'Reembolso não encontrado'}), 404
 
         db.session.delete(reembolso)
         db.session.commit()
