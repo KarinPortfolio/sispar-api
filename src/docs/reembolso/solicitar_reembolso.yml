@@ -1,0 +1,86 @@
+tags:
+  - Reembolso
+description: Listar reembolso
+
+parameters:
+  - in: body
+    name: corpo
+    required: true
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          colaborador:
+            type: string
+            example: 
+          empresa:
+            type: string
+            example: 
+          num_prestacao:
+            type: number
+            example: 
+          descricao:
+            type: string
+            example: 
+          data:
+            type: date
+            example: 2025/01/01
+          tipo_reembolso:
+            type: string
+            example: 
+          centro_custo:
+            type: string
+            example: 
+          ordem_interna:
+            type: string
+            example: 
+            description: 
+          divisao:
+            type: string
+            example: 
+            description: 
+          pep:
+            type: string
+            example: 
+            description:
+          moeda:
+            type: string
+            example: 
+          distancia_km:
+            type: string
+            example: 
+          valor_km:
+            type: 
+            example:
+          valor_faturado:
+            type: 
+            example:
+          despesa:
+            type: number
+            example: 
+            description: 
+          id_colaborador:
+            type: number
+            example: 
+          status:
+            type: 
+            example: 
+
+        required:
+          - colaborador
+          - empresa
+          - num_prestacao
+          - data
+          - tipo_reembolso
+          - centro_custo
+          - moeda
+          - valor_faturado
+
+post:
+  201:
+    description: Solicitação feita com sucesso
+  400:
+    description: Erro na requisição
+  500:
+    description: Erro inesperado ao processar a requisição

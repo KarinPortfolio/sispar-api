@@ -41,51 +41,73 @@ def buscar_por_nprestacao(num_prestacao):
         return jsonify({'erro': 'Erro inesperado ao processar a requisição', 'detalhes': str(error)}), 500
 @bp_reembolso.route('/solicitacao', methods=['POST'])
 @swag_from('../docs/reembolso/solicitar_reembolso.yml')
-def solicitar_novo_reembolso():
+def solicitar_reembolso():
+    """
+    Esta rota processa solicitações de reembolso.
+
+    Retorna:
+        json: Um JSON com a mensagem de sucesso ou erro, e o código de status HTTP apropriado.
+    """
+    dados_requisicao = request.get_json()
+
+    # Verifica se os dados da requisição estão presentes e completos
+    if not dados_requisicao:
+        return jsonify({'mensagem': 'Dados não inseridos. A requisição está vazia.'}), 400
+
+    campos_obrigatorios = ['colaborador', 'empresa', 'num_prestacao', 'data', 'tipo_reembolso',
+                           'centro_custo', 'ordem_interna', 'moeda', 'valor_faturado']
+    if not all(campo in dados_requisicao for campo in campos_obrigatorios):
+        campos_faltantes = [campo for campo in campos_obrigatorios if campo not in dados_requisicao]
+        return jsonify({'mensagem': 'Dados incompletos. Preencha todos os campos obrigatórios.',
+                        'campos_faltantes': campos_faltantes}), 400
+
     try:
-        listar_solicitacao = request.get_json()
-        objetos_solicitacao = []
-        for dados_solicitacao in listar_solicitacao:
-            try:
-                data_obj = datetime.datetime.strptime(dados_solicitacao['data'], '%Y-%m-%d').date()
-            except ValueError:
-                data_obj = None  # Ou outra forma de lidar com data inválida
+        # Converte a string de data para um objeto datetime
+        data_str = dados_requisicao.get('data')
+        try:
+            data_obj = datetime.strptime(data_str, '%Y-%m-%d')  # Ajuste o formato conforme necessário
+        except ValueError:
+            return jsonify({'erro': 'Formato de data inválido. Use o formato AAAA-MM-DD.', 'data_recebida': data_str}), 400
 
-            nova_solicitacao = Reembolso(
-                colaborador=dados_solicitacao.get('colaborador'),
-                empresa=dados_solicitacao.get('empresa'),
-                num_prestacao=dados_solicitacao.get('num_prestacao'),
-                descricao=dados_solicitacao.get('descricao'),
-                data=data_obj,
-                tipo_reembolso=dados_solicitacao.get('tipo_reembolso'),
-                centro_custo=dados_solicitacao.get('centro_custo'),
-                ordem_interna=dados_solicitacao.get('ordem_interna'),
-                divisao=dados_solicitacao.get('divisao'),
-                pep=dados_solicitacao.get('pep'),
-                moeda=dados_solicitacao.get('moeda'),
-                distancia_km=dados_solicitacao.get('distancia_km'),
-                valor_km=dados_solicitacao.get('valor_km'),
-                valor_faturado=dados_solicitacao.get('valor_faturado'),
-                despesa=dados_solicitacao.get('despesa'),
-                id_colaborador=dados_solicitacao.get('id_colaborador'),
-                status='analisando',
-            )
-            objetos_solicitacao.append(nova_solicitacao)
+        # Cria uma nova instância de Reembolso
+        nova_solicitacao = Reembolso(
+            colaborador=dados_requisicao.get('colaborador'),
+            empresa=dados_requisicao.get('empresa'),
+            num_prestacao=dados_requisicao.get('num_prestacao'),
+            descricao=dados_requisicao.get('descricao'),
+            data=data_obj,
+            tipo_reembolso=dados_requisicao.get('tipo_reembolso'),
+            centro_custo=dados_requisicao.get('centro_custo'),
+            ordem_interna=dados_requisicao.get('ordem_interna'),
+            divisao=dados_requisicao.get('divisao'),
+            pep=dados_requisicao.get('pep'),
+            moeda=dados_requisicao.get('moeda'),
+            distancia_km=dados_requisicao.get('distancia_km'),
+            valor_km=dados_requisicao.get('valor_km'),
+            valor_faturado=dados_requisicao.get('valor_faturado'),
+            despesa=dados_requisicao.get('despesa'),
+            id_colaborador=dados_requisicao.get('id_colaborador'),
+            status='analisando',  # Define o status inicial
+        )
 
-        db.session.add_all(objetos_solicitacao)
+        # Adiciona a nova solicitação à sessão do banco de dados
+        db.session.add(nova_solicitacao)
         db.session.commit()
-        return jsonify({'response': 'Solicitação feita com sucesso'}), 201
+
+        return jsonify({'mensagem': 'Solicitação de reembolso criada com sucesso.', 'id': nova_solicitacao.id}), 201  # Retorna o ID da solicitação criada
 
     except ValueError as ve:
-        return jsonify({'erro': 'Erro ao processar os dados: Formato inválido', 'detalhes': str(ve)}), 400
+        db.session.rollback()  # Rollback em caso de erro
+        return jsonify({'erro': 'Erro de valor inválido.', 'detalhes': str(ve)}), 400
     except KeyError as ke:
-        return jsonify({'erro': 'Erro ao processar os dados: Chave não encontrada', 'detalhes': str(ke)}), 400
+        db.session.rollback()
+        return jsonify({'erro': 'Erro de chave não encontrada.', 'detalhes': str(ke)}), 400
     except SQLAlchemyError as e:
         db.session.rollback()
-        return jsonify({'erro': 'Erro ao acessar o banco de dados', 'detalhes': str(e)}), 500
-    except Exception as erro:
+        return jsonify({'erro': 'Erro de banco de dados.', 'detalhes': str(e)}), 500
+    except Exception as e:
         db.session.rollback()
-        return jsonify({'erro': 'Erro inesperado ao processar a requisição', 'detalhes': str(erro)}), 500
+        return jsonify({'erro': 'Erro desconhecido.', 'detalhes': str(e)}), 500
 
 @bp_reembolso.route('<int:id>')
 def buscar_por_id_colaborador(id):
