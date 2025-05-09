@@ -36,6 +36,8 @@ def cadastrar_colaborador():
     if colaborador_existente := db.session.execute(
         db.select(Colaborador).where(Colaborador.email == email)
     ).scalar():
+        # Log or handle the case where the user already exists
+        print('Usuário já existe')
         return jsonify({'mensagem': 'Email já existe.'}), 500
     else:
         novo_colaborador = Colaborador(
