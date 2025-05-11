@@ -13,10 +13,10 @@ parameters:
           example: João Silva
         email:
           type: string
-          example: joao@email.com
+          example: teste@email.com
         senha:
           type: string
-          example: senha123
+          example: 123
         cargo:
           type: string
           example: Analista
