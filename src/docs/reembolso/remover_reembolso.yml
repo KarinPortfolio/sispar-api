@@ -2,6 +2,13 @@ tags:
   - Reembolsos
 summary: Remove uma solicitação de reembolso pelo número de prestação de serviço.
 description: Remove reembolso.
+parameters:
+  - in: path
+    name: num_prestacao
+    required: true
+    schema:
+      type: integer
+    description: remove o pedido de reembolso pelo número de prestação de serviço.
 responses:
   200:
     description: Requisição processada com sucesso.

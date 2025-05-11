@@ -13,59 +13,59 @@ parameters:
         properties:
           colaborador:
             type: string
-            example:
+            example: "Zeca Samba"
           empresa:
             type: string
-            example:
+            example: "Ze Caçamba"
           num_prestacao:
             type: number
-            example:
+            example: "15"
           descricao:
             type: string
-            example:
+            example: "remoção de entulho"
           data:
             type: date
-            example: 2025/01/01
+            example: 2025/01/25
           tipo_reembolso:
             type: string
-            example:
+            example: "1"
           centro_custo:
             type: string
-            example:
+            example: "2"
           ordem_interna:
             type: string
-            example:
+            example: "123"
             description:
           divisao:
             type: string
-            example:
+            example: "2"
             description:
           pep:
             type: string
-            example:
+            example: "5"
             description:
           moeda:
             type: string
-            example:
+            example: "real"
           distancia_km:
             type: string
-            example:
+            example: "10"
           valor_km:
-            type:
-            example:
+            type: string
+            example: "5.00"
           valor_faturado:
-            type:
-            example:
+            type: string
+            example: "100.00"
           despesa:
             type: number
-            example:
-            description:
+            example: 200
+            description: "Despesa total"
           id_colaborador:
             type: number
-            example:
+            example: 2
           status:
-            type:
-            example:
+            type: string
+            example: "aprovado"
 
         required:
           - colaborador

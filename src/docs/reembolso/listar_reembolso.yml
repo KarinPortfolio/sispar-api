@@ -14,7 +14,7 @@ responses:
             properties:
               id:
                 type: integer
-                description: O ID do reembolso.
+                description: O número do processo de reembolso.
               valor:
                 type: number
                 format: float

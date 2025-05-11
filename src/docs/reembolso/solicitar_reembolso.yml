@@ -1,7 +1,7 @@
 tags:
   - Reembolso
-description: Serve para fazer a solicitação de reembolso
-
+summary: Cria uma solicitação de reembolso
+description: Fazer a solicitação de reembolso
 parameters:
   - in: body
     name: corpo
@@ -13,59 +13,59 @@ parameters:
         properties:
           colaborador:
             type: string
-            example:
+            example: "Zeca Samba"
           empresa:
             type: string
-            example:
+            example: "Ze Caçamba"
           num_prestacao:
             type: number
-            example:
+            example: "15"
           descricao:
             type: string
-            example:
+            example: "festa de confraternização"
           data:
             type: date
-            example: 2025/01/01
+            example: 2025/01/25
           tipo_reembolso:
             type: string
-            example:
+            example: "1"
           centro_custo:
             type: string
-            example:
+            example: "2"
           ordem_interna:
             type: string
-            example:
-            description:
+            example: "123"
+            description: "Descrição da ordem interna"
           divisao:
             type: string
-            example:
-            description:
+            example: "2"
+            description: "Descrição da divisão"
           pep:
             type: string
-            example:
-            description:
+            example: "5"
+            description: "Descrição do PEP"
           moeda:
             type: string
-            example:
+            example: "real"
           distancia_km:
             type: string
-            example:
+            example: "10"
           valor_km:
-            type:
-            example:
+            type: string
+            example: "5.00"
           valor_faturado:
-            type:
-            example:
+            type: string
+            example: "100.00"
           despesa:
             type: number
-            example:
-            description:
+            example: 200
+            description: "Despesa total"
           id_colaborador:
             type: number
-            example:
+            example: 2
           status:
-            type:
-            example:
+            type: string
+            example: "aprovado"
 
         required:
           - colaborador
@@ -76,11 +76,11 @@ parameters:
           - centro_custo
           - moeda
           - valor_faturado
+responses:
+  200:
+    description: Requisição processada com sucesso.
 
-post:
-  201:
-    description: Solicitação feita com sucesso
-  400:
-    description: Erro na requisição
+  404:
+    description: Reembolso não encontrado
   500:
     description: Erro inesperado ao processar a requisição

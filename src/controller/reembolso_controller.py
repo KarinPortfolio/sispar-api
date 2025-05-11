@@ -3,6 +3,7 @@ from src.model.reembolso_model import Reembolso
 from src.model import db
 from flasgger import swag_from  # type: ignore
 import datetime
+from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 
 bp_reembolso = Blueprint("reembolso", __name__, url_prefix="/reembolso")
@@ -71,21 +72,15 @@ def solicitar_reembolso():
 
 @bp_reembolso.route("/reembolsos")
 @swag_from('../docs/reembolso/listar_reembolso.yml')
-def listar_todos_reembolsos():
-    try:
-        reembolsos = db.session.execute(db.select(Reembolso)).scalars().all()
-        print(f"Tipo de 'reembolsos': {type(reembolsos)}")
-        if reembolsos:
-            for item in reembolsos:
-                print(f"Tipo de item em 'reembolsos': {type(item)}")
-            
-            reembolsos = [reembolso.all_data() for reembolso in reembolsos]
-            return jsonify(reembolsos), 200
-        else:
-            return jsonify({'response': 'Não há reembolsos cadastrados'}), 404
+def listar_reembolso():
+    reembolsos = db.session.execute(
+        db.select(Reembolso)
+    ).scalars().all()
 
-    except Exception as error:
-        return jsonify({'erro': 'Erro inesperado ao processar a requisição', 'detalhes': str(error)}), 500
+    reemb_lista = [reembolso.to_dict() for reembolso in reembolsos]
+
+    return jsonify(reemb_lista)
+
 
 @bp_reembolso.route('/num_prestacao/<int:num_prestacao>', methods=['GET'])
 @swag_from('../docs/reembolso/num_prestacao.yml')
@@ -117,18 +112,18 @@ def buscar_por_id_colaborador(id):
     except Exception as error:
         return jsonify({'error': 'Erro inesperado ao processar a requisição ', 'detalhes': str(error)}), 500
 
-@bp_reembolso.route('deletar/<int:id>', methods=['DELETE'])
+@bp_reembolso.route('deletar/<int:num_processo>', methods=['DELETE'])
 @swag_from('../docs/reembolso/remover_reembolso.yml')
-def deletar_por_id(id):
+def deletar_por_num_p(num_processo):
     try:
         reembolso = db.session.execute(
-            db.select(Reembolso).where(Reembolso.id == id)
+            db.select(Reembolso).where(Reembolso.num_prestacao == num_processo)
         ).scalar()
 
         db.session.delete(reembolso)
         db.session.commit()
 
-        return jsonify({'mensagem': f'Reembolso {id} deletado com sucesso'}), 200
+        return jsonify({'mensagem': f'Reembolso {num_processo} deletado com sucesso'}), 200
     except Exception as error:
         return jsonify({'erro': 'Erro inesperado ao processar a requisição', 'detalhes': str(error)}), 500
     
@@ -140,7 +135,9 @@ def atualizar_solicitacao(num_processo):
     if not dados_atualizacao:
         return jsonify({'mensagem': 'Dados para atualização não fornecidos.'}), 400
 
-    reembolso = db.session.get(Reembolso, num_processo)
+    reembolso = db.session.execute(
+        select(Reembolso).where(Reembolso.num_prestacao == num_processo)  # Use select e where
+    ).scalar_one_or_none()
 
     if not reembolso:
         return jsonify({'mensagem': f'Processo com número {num_processo} não encontrado.'}), 404
@@ -157,8 +154,8 @@ def atualizar_solicitacao(num_processo):
 
     try:
         db.session.commit()
-        db.session.refresh(reembolso)  # Recarrega a instância 'reembolso'
-        return jsonify({'mensagem': f'Dados do processo {num_processo} foi atualizado com sucesso.', 'processo': reembolso.all_data()}), 200
+        db.session.refresh(reembolso)
+        return jsonify({'mensagem': f'Dados do processo {num_processo} foi atualizado com sucesso.', 'processo': reembolso.to_dict()}), 200
     except SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({'erro': 'Erro ao atualizar o banco de dados.', 'detalhes': str(e)}), 500

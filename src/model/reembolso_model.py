@@ -4,7 +4,7 @@ from sqlalchemy import func, ForeignKey
 from sqlalchemy.types import Integer, String, DECIMAL, Date
 
 class Reembolso(db.Model):
-    __tablename__ = 'reembolso'
+    __tablename__ = 'reembolsos'
     id = Column(Integer, primary_key=True, autoincrement=True)
     colaborador = Column(String(100), nullable=False)
     empresa = Column(String(50), nullable=False)
@@ -44,45 +44,24 @@ class Reembolso(db.Model):
         self.id_colaborador = id_colaborador
         self.status = status
 
-def to_dict(self) -> dict:
-    return {
-        'colaborador': self.colaborador,
-        'empresa': self.empresa,
-        'num_prestacao': self.num_prestacao,
-        'descricao': self.descricao,
-        'data': self.data.isoformat() if self.data else None,
-        'tipo_reembolso': self.tipo_reembolso,
-        'centro_custo': self.centro_custo,
-        'ordem_interna': self.ordem_interna,
-        'divisao': self.divisao,
-        'pep': self.pep,
-        'moeda': self.moeda,
-        'distancia_km': self.distancia_km,
-        'valor_km': self.valor_km,
-        'valor_faturado': self.valor_faturado,
-        'despesa': self.despesa,
-        'id_colaborador': self.id_colaborador,
-        'status': self.status,
-    }
-
-def all_data(self):
-    return {
-        'id': self.id,
-        'colaborador': self.colaborador,
-        'empresa': self.empresa,
-        'num_prestacao': self.num_prestacao,
-        'descricao': self.descricao,
-        'data': self.data.isoformat() if self.data else None,
-        'tipo_reembolso': self.tipo_reembolso,
-        'centro_custo': self.centro_custo,
-        'ordem_interna': self.ordem_interna,
-        'divisao': self.divisao,
-        'pep': self.pep,
-        'moeda': self.moeda,
-        'distancia_km': self.distancia_km,
-        'valor_km': self.valor_km,
-        'valor_faturado': self.valor_faturado,
-        'despesa': self.despesa,
-        'id_colaborador': self.id_colaborador,
-        'status': self.status
-    }
+    def to_dict(self):
+        return{
+            'colaborador' : self.colaborador,
+            'empresa' : self.empresa,
+            'num_prestacao' : self.num_prestacao,
+            'descricao' : self.descricao,
+            'data' : self.data,
+            'tipo_reembolso' : self.tipo_reembolso,
+            'centro_custo' : self.centro_custo,
+            'ordem_interna' : self.ordem_interna,
+            'divisao' : self.divisao,
+            'pep' : self.pep,
+            'moeda' : self.moeda,
+            'distancia_km' : self.distancia_km,
+            'valor_km' : self.valor_km,
+            'valor_faturado' : self.valor_faturado,
+            'dispesa' : self.despesa,
+            'id_colaborador' : self.id_colaborador,
+            'status' : self.status
+        }
+        
