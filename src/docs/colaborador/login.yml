@@ -1,6 +1,6 @@
 tags:
   - Colaborador
-description: Autentica e faze login na aplicação como um colaborador. É necessário para acessar o sistema.
+description: Autentica e faz login na aplicação como um colaborador. É necessário para acessar o sistema.
 
 parameters:
   - in: body
