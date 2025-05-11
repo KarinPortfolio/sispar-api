@@ -36,21 +36,22 @@ def cadastrar_colaborador():
     if colaborador_existente := db.session.execute(
         db.select(Colaborador).where(Colaborador.email == email)
     ).scalar():
-        # Log or handle the case where the user already exists
+       
         print('Usuário já existe')
         return jsonify({'mensagem': 'Email já existe.'}), 500
     else:
+       
+        senha_str = str(dados_requisicao['senha'])
         novo_colaborador = Colaborador(
             nome=dados_requisicao.get('nome'),
             email=dados_requisicao.get('email'),
-            senha=hash_senha(dados_requisicao['senha']), # A senha é hasheada AQUI
+            senha=hash_senha(senha_str), 
             cargo=dados_requisicao.get('cargo'),
             salario=dados_requisicao.get('salario')
         )
         db.session.add(novo_colaborador)
         db.session.commit()
         return jsonify({'mensagem': 'Colaborador cadastrado com sucesso', 'colaborador': novo_colaborador.all_data()}), 201
-
 
 @bp_colaborador.route('/login', methods=['POST'])
 @swag_from('../docs/colaborador/login.yml')
