@@ -21,6 +21,8 @@ Este é o projeto final do curso de fullstack da Escola Vai na Web. Consiste num
 
 - Sistema de emissão de reembolso.
 
+![Estrutura do banco de dados](docs/imagens/Caso1-Novo_Usuario.png)
+
 # 2. EndPoints da API:
 
 Documentação dos principais endpoints (incluindo método HTTP, URL, parâmetros, e exemplo de resposta).
