@@ -10,13 +10,13 @@ parameters:
       properties:
         nome:
           type: string
-          example: João Silva
+          example: João da Silva
         email:
           type: string
           example: teste@email.com
         senha:
           type: string
-          example: "123senha"
+          example: "123"
         cargo:
           type: string
           example: Analista

@@ -3,26 +3,6 @@ tags:
 description: Atualiza os dados de um colaborador da base de dados pelo id
 
 parameters:
-  - in: body
-    name: corpo
-    required: true
-    schema:
-      type: object
-      properties:
-        nome:
-          type: string
-          example: João Script
-        senha:
-          type: string
-          example: "123123"
-        cargo:
-          type: string
-          example: Analista
-        salario:
-          type: number
-          example: 3500.75
-      required:
-
   - in: path
     name: id_colaborador
     required: true
@@ -33,10 +13,26 @@ parameters:
   - in: body
     name: corpo
     required: true
-
     schema:
       type: object
-put:
+      properties:
+        nome:
+          type: string
+          example: João da Silva
+        email:
+          type: string
+          example: teste@email.com
+        senha:
+          type: string
+          example: "123"
+        cargo:
+          type: string
+          example: Analista
+        salario:
+          type: number
+          example: 3500.75
+
+responses:
   200:
     description: Dados do colaborador atualizados com sucesso
   400:

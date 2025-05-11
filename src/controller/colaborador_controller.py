@@ -3,6 +3,7 @@ from src.model.colaborador_model import Colaborador
 from src.model import db
 from src.security.security import checar_senha, hash_senha
 from flasgger import swag_from
+from sqlalchemy.ext.declarative import declarative_base
 
 bp_colaborador = Blueprint('colaborador', __name__, url_prefix='/colaborador')
 
@@ -42,6 +43,7 @@ def cadastrar_colaborador():
     else:
        
         senha_str = str(dados_requisicao['senha'])
+        
         novo_colaborador = Colaborador(
             nome=dados_requisicao.get('nome'),
             email=dados_requisicao.get('email'),
@@ -53,13 +55,11 @@ def cadastrar_colaborador():
         db.session.commit()
         return jsonify({'mensagem': 'Colaborador cadastrado com sucesso', 'colaborador': novo_colaborador.all_data()}), 201
 
-@bp_colaborador.route('/login', methods=['POST'])
-@swag_from('../docs/colaborador/login.yml')
 def login():
     dados_requisicao = request.get_json()
     email = dados_requisicao.get('email')
-    senha = dados_requisicao.get('senha')
-
+    senha = str(dados_requisicao.get('senha'))      
+        
     if not email or not senha:
         return jsonify({'mensagem': 'Email e senha são obrigatórios'}), 400
 
@@ -70,24 +70,24 @@ def login():
     if not colaborador:
         return jsonify({'mensagem': 'Usuário não encontrado'}), 404
 
-    if checar_senha(senha, colaborador.senha):
+    if checar_senha(senha, colaborador.hash_senha(senha)):
         return jsonify({'mensagem': 'Login realizado com sucesso.'}), 200
     else:
         return jsonify({'mensagem': 'Credenciais inválidas.'}), 401
 
 
-@bp_colaborador.route('/atualizar/<int:colaborador_id>', methods=['PUT'])
+@bp_colaborador.route('/atualizar/<int:id>', methods=['PUT'])
 @swag_from('../docs/colaborador/atualizar_colaborador.yml')
-def atualizar_colaborador(colaborador_id):
+def atualizar_colaborador(id):
     dados_atualizacao = request.get_json()
 
     if not dados_atualizacao:
         return jsonify({'mensagem': 'Dados para atualização não fornecidos.'}), 400
 
-    colaborador = db.session.get(Colaborador, colaborador_id)
+    colaborador = db.session.get(Colaborador, id)
 
     if not colaborador:
-        return jsonify({'mensagem': f'Colaborador com ID {colaborador_id} não encontrado.'}), 404
+        return jsonify({'mensagem': f'Colaborador com ID {id} não encontrado.'}), 404
 
     if 'nome' in dados_atualizacao:
         colaborador.nome = dados_atualizacao['nome']
@@ -101,16 +101,16 @@ def atualizar_colaborador(colaborador_id):
         colaborador.email = dados_atualizacao['email']
 
     db.session.commit()
-    return jsonify({'mensagem': f'Dados do colaborador com ID {colaborador_id} atualizado com sucesso.', 'colaborador': colaborador.all_data()}), 200
+    return jsonify({'mensagem': f'Dados do colaborador com ID {id} atualizado com sucesso.', 'colaborador': colaborador.all_data()}), 200
 
-@bp_colaborador.route('/deletar/<int:colaborador_id>', methods=['DELETE'])
+@bp_colaborador.route('/deletar/<int:id>', methods=['DELETE'])
 @swag_from('../docs/colaborador/deletar_colaborador.yml')
-def deletar_colaborador(colaborador_id):
-    colaborador = db.session.get(Colaborador, colaborador_id)
+def deletar_colaborador(id):
+    colaborador = db.session.get(Colaborador, id)
 
     if not colaborador:
-        return jsonify({'mensagem': f'Colaborador com ID {colaborador_id} não encontrado.'}), 404
+        return jsonify({'mensagem': f'Colaborador com ID {id} não encontrado.'}), 404
 
     db.session.delete(colaborador)
     db.session.commit()
-    return jsonify({'mensagem': f'Colaborador com ID {colaborador_id} deletado com sucesso.'}), 200
+    return jsonify({'mensagem': f'Colaborador com ID {id} deletado com sucesso.'}), 200

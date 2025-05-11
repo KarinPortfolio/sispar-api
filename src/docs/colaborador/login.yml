@@ -15,7 +15,7 @@ parameters:
           example: teste@email.com
         senha:
           type: string
-          example: 123
+          example: "123"
       required:
         - email
         - senha
