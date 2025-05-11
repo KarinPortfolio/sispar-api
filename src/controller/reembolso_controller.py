@@ -88,6 +88,7 @@ def listar_todos_reembolsos():
         return jsonify({'erro': 'Erro inesperado ao processar a requisição', 'detalhes': str(error)}), 500
 
 @bp_reembolso.route('/num_prestacao/<int:num_prestacao>', methods=['GET'])
+@swag_from('../docs/reembolso/num_prestacao.yml')
 def buscar_por_nprestacao(num_prestacao):
     try:
         reembolsos = db.session.execute(
@@ -117,6 +118,7 @@ def buscar_por_id_colaborador(id):
         return jsonify({'error': 'Erro inesperado ao processar a requisição ', 'detalhes': str(error)}), 500
 
 @bp_reembolso.route('deletar/<int:id>', methods=['DELETE'])
+@swag_from('../docs/reembolso/remover_reembolso.yml')
 def deletar_por_id(id):
     try:
         reembolso = db.session.execute(
