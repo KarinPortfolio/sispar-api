@@ -7,75 +7,68 @@ parameters:
     name: corpo
     required: true
     schema:
-      type: array
-      items:
-        type: object
-        properties:
-          colaborador:
-            type: string
-            example: "Zeca Samba"
-          empresa:
-            type: string
-            example: "Ze Caçamba"
-          num_prestacao:
-            type: number
-            example: "15"
-          descricao:
-            type: string
-            example: "festa de confraternização"
-          data:
-            type: date
-            example: 2025/01/25
-          tipo_reembolso:
-            type: string
-            example: "1"
-          centro_custo:
-            type: string
-            example: "2"
-          ordem_interna:
-            type: string
-            example: "123"
-            description: "Descrição da ordem interna"
-          divisao:
-            type: string
-            example: "2"
-            description: "Descrição da divisão"
-          pep:
-            type: string
-            example: "5"
-            description: "Descrição do PEP"
-          moeda:
-            type: string
-            example: "real"
-          distancia_km:
-            type: string
-            example: "10"
-          valor_km:
-            type: string
-            example: "5.00"
-          valor_faturado:
-            type: string
-            example: "100.00"
-          despesa:
-            type: number
-            example: 200
-            description: "Despesa total"
-          id_colaborador:
-            type: number
-            example: 2
-          status:
-            type: string
-            example: "aprovado"
+      type: object
+      properties:
+        colaborador:
+          type: string
+          example: "Zeca Samba"
+        empresa:
+          type: string
+          example: "Ze Caçamba"
+        num_prestacao:
+          type: number
+          example: 15
+        descricao:
+          type: string
+          example: "festa de confraternização"
+        data:
+          type: string
+          format: date
+          example: "2025-01-25"
+        tipo_reembolso:
+          type: string
+          example: "1"
+        centro_custo:
+          type: string
+          example: "2"
+        ordem_interna:
+          type: string
+          example: "123"
+          description: "Descrição da ordem interna"
+        divisao:
+          type: string
+          example: "2"
+        pep:
+          type: string
+          example: "5"
+          description: "Descrição do PEP"
+        moeda:
+          type: string
+          example: "real"
+        distancia_km:
+          type: string
+          example: "10"
+        valor_km:
+          type: string
+          example: "5.00"
+        valor_faturado:
+          type: string
+          example: "100.00"
+        despesa:
+          type: number
+          example: 200
+          description: "Despesa total"
+        id_colaborador:
+          type: number
+          example: 2
 
       required:
         - colaborador
         - empresa
         - num_prestacao
-        - descricao
         - data
         - tipo_reembolso
         - centro_custo
-        - ordem_interna
         - moeda
         - valor_faturado
         - id_colaborador

@@ -8,7 +8,7 @@ class Reembolso(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     colaborador = Column(String(100), nullable=False)
     empresa = Column(String(50), nullable=False)
-    num_prestacao = Column(Integer, nullable=False)
+    num_prestacao = Column(Integer, nullable=False, unique=True)
     descricao = Column(String(255))
     data = Column(Date, nullable=False, server_default= func.current_date())
     tipo_reembolso = Column(String(35), nullable=False)

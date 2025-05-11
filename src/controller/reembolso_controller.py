@@ -28,9 +28,10 @@ def solicitar_reembolso():
             data_obj = datetime.datetime.strptime(data_str, '%Y-%m-%d')  # Ajuste o formato conforme necessário
         except ValueError:
             return jsonify({'erro': 'Formato de data inválido. Use o formato AAAA-MM-DD.', 'data_recebida': data_str}), 400
-
+        
+        else:
         # Cria uma nova instância de Reembolso
-        nova_solicitacao = Reembolso(
+            nova_solicitacao = Reembolso(
             colaborador=dados_requisicao.get('colaborador'),
             empresa=dados_requisicao.get('empresa'),
             num_prestacao=dados_requisicao.get('num_prestacao'),

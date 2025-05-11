@@ -9,6 +9,7 @@ parameters:
     schema:
       type: integer
     description: remove o pedido de reembolso pelo número de prestação de serviço.
+
 responses:
   200:
     description: Requisição processada com sucesso.
