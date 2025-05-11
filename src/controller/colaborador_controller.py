@@ -1,15 +1,14 @@
 from flask import Blueprint, jsonify, request
 from src.model.colaborador_model import Colaborador
 from src.model import db
-from src.security.security import checar_senha, hash_senha
+from src.security.security import checar_senha, hash_senha  
 from flasgger import swag_from
-from sqlalchemy.ext.declarative import declarative_base
+import bcrypt  
 
 bp_colaborador = Blueprint('colaborador', __name__, url_prefix='/colaborador')
 
 @bp_colaborador.route('/todos-colaboradores', methods=['GET'])
 @swag_from('../docs/colaborador/listar_colaborador.yml')
-
 def pegar_dados_todos_colaboradores():
     try:
         colaboradores = db.session.execute(
@@ -26,7 +25,6 @@ def pegar_dados_todos_colaboradores():
 
 @bp_colaborador.route('/cadastrar', methods=['POST'])
 @swag_from('../docs/colaborador/cadastrar_colaborador.yml')
-
 def cadastrar_colaborador():
     dados_requisicao = request.get_json()
 
@@ -36,18 +34,18 @@ def cadastrar_colaborador():
     email = dados_requisicao.get('email')
     if colaborador_existente := db.session.execute(
         db.select(Colaborador).where(Colaborador.email == email)
-    ).scalar():
-       
+    ).scalar_one_or_none():
+
         print('Usuário já existe')
         return jsonify({'mensagem': 'Email já existe.'}), 500
     else:
-       
         senha_str = str(dados_requisicao['senha'])
-        
+        senha_hash = hash_senha(senha_str) 
+
         novo_colaborador = Colaborador(
             nome=dados_requisicao.get('nome'),
             email=dados_requisicao.get('email'),
-            senha=hash_senha(senha_str), 
+            senha=senha_hash,
             cargo=dados_requisicao.get('cargo'),
             salario=dados_requisicao.get('salario')
         )
@@ -60,23 +58,25 @@ def cadastrar_colaborador():
 def login():
     dados_requisicao = request.get_json()
     email = dados_requisicao.get('email')
-    senha = str(dados_requisicao.get('senha'))      
-        
-    if not email or not senha:
+    senha_fornecida = str(dados_requisicao.get('senha'))
+
+    if not email or not senha_fornecida:
         return jsonify({'mensagem': 'Email e senha são obrigatórios'}), 400
 
     colaborador = db.session.execute(
         db.select(Colaborador).where(Colaborador.email == email)
-    ).scalar()
+    ).scalar_one_or_none()
 
     if not colaborador:
         return jsonify({'mensagem': 'Usuário não encontrado'}), 404
 
-    if checar_senha(senha, colaborador.hash_senha(senha)):
+    senha_hash_armazenado = colaborador.senha.encode('utf-8')
+    senha_fornecida_bytes = senha_fornecida.encode('utf-8')
+
+    if bcrypt.checkpw(senha_fornecida_bytes, senha_hash_armazenado):
         return jsonify({'mensagem': 'Login realizado com sucesso.'}), 200
     else:
         return jsonify({'mensagem': 'Credenciais inválidas.'}), 401
-
 
 @bp_colaborador.route('/atualizar/<int:id>', methods=['PUT'])
 @swag_from('../docs/colaborador/atualizar_colaborador.yml')

@@ -7,6 +7,7 @@ from flask_cors import CORS
 from flasgger import Swagger
 from flask_sqlalchemy import SQLAlchemy
 
+    
 Swagger_config = {
     "headers": [],
     "specs": [
@@ -36,4 +37,5 @@ def create_app():
     with app.app_context():
         db.create_all()
     Swagger(app, config=Swagger_config)
+    
     return app

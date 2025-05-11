@@ -12,64 +12,77 @@ bp_reembolso = Blueprint("reembolso", __name__, url_prefix="/reembolso")
 def solicitar_reembolso():
     dados_requisicao = request.get_json()
 
+    if not isinstance(dados_requisicao, list):
+        return jsonify({'mensagem': 'Formato de dados incorreto. Espera-se uma lista de solicitações.'}), 400
+
     if not dados_requisicao:
-        return jsonify({'mensagem': 'Dados não inseridos. A requisição está vazia.'}), 400
+        return jsonify({'mensagem': 'Nenhuma solicitação de reembolso fornecida.'}), 400
 
-    campos_obrigatorios = ['colaborador', 'empresa', 'num_prestacao', 'data', 'tipo_reembolso',
-                           'centro_custo', 'ordem_interna', 'moeda', 'valor_faturado']
-    if not all(campo in dados_requisicao for campo in campos_obrigatorios):
-        campos_faltantes = [campo for campo in campos_obrigatorios if campo not in dados_requisicao]
-        return jsonify({'mensagem': 'Dados incompletos. Preencha todos os campos obrigatórios.',
-                        'campos_faltantes': campos_faltantes}), 400
+    solicitacoes_criadas = []
+    erros = []
 
-    try:        
-        data_str = dados_requisicao.get('data')
+    for item_requisicao in dados_requisicao:
+        campos_obrigatorios = ['colaborador', 'empresa', 'num_prestacao', 'data', 'tipo_reembolso',
+                                 'centro_custo', 'moeda', 'valor_faturado', 'id_colaborador'] # 'ordem_interna' removido como obrigatório no exemplo do Swagger
+        if not all(campo in item_requisicao for campo in campos_obrigatorios):
+            campos_faltantes = [campo for campo in campos_obrigatorios if campo not in item_requisicao]
+            erros.append({'erro': 'Dados incompletos para uma solicitação.', 'campos_faltantes': campos_faltantes, 'dados_recebidos': item_requisicao})
+            continue
+
         try:
-            data_obj = datetime.datetime.strptime(data_str, '%Y-%m-%d')  # Ajuste o formato conforme necessário
-        except ValueError:
-            return jsonify({'erro': 'Formato de data inválido. Use o formato AAAA-MM-DD.', 'data_recebida': data_str}), 400
-        
-        else:
-        # Cria uma nova instância de Reembolso
+            data_str = item_requisicao.get('data')
+            if not data_str:
+                erros.append({'erro': 'Campo "data" ausente para uma solicitação.', 'dados_recebidos': item_requisicao})
+                continue
+            try:
+                data_obj = datetime.datetime.strptime(data_str, '%Y-%m-%d').date() # Alterado para .date()
+            except ValueError:
+                erros.append({'erro': 'Formato de data inválido para uma solicitação. Use AAAA-MM-DD.', 'data_recebida': data_str, 'dados_recebidos': item_requisicao})
+                continue
+
             nova_solicitacao = Reembolso(
-            colaborador=dados_requisicao.get('colaborador'),
-            empresa=dados_requisicao.get('empresa'),
-            num_prestacao=dados_requisicao.get('num_prestacao'),
-            descricao=dados_requisicao.get('descricao'),
-            data=data_obj,
-            tipo_reembolso=dados_requisicao.get('tipo_reembolso'),
-            centro_custo=dados_requisicao.get('centro_custo'),
-            ordem_interna=dados_requisicao.get('ordem_interna'),
-            divisao=dados_requisicao.get('divisao'),
-            pep=dados_requisicao.get('pep'),
-            moeda=dados_requisicao.get('moeda'),
-            distancia_km=dados_requisicao.get('distancia_km'),
-            valor_km=dados_requisicao.get('valor_km'),
-            valor_faturado=dados_requisicao.get('valor_faturado'),
-            despesa=dados_requisicao.get('despesa'),
-            id_colaborador=dados_requisicao.get('id_colaborador'),
-            status='analisando',  # Define o status inicial
-        )
+                colaborador=item_requisicao.get('colaborador'),
+                empresa=item_requisicao.get('empresa'),
+                num_prestacao=item_requisicao.get('num_prestacao'),
+                descricao=item_requisicao.get('descricao'),
+                data=data_obj,
+                tipo_reembolso=item_requisicao.get('tipo_reembolso'),
+                centro_custo=item_requisicao.get('centro_custo'),
+                ordem_interna=item_requisicao.get('ordem_interna'),
+                divisao=item_requisicao.get('divisao'),
+                pep=item_requisicao.get('pep'),
+                moeda=item_requisicao.get('moeda'),
+                distancia_km=item_requisicao.get('distancia_km'),
+                valor_km=item_requisicao.get('valor_km'),
+                valor_faturado=item_requisicao.get('valor_faturado'),
+                despesa=item_requisicao.get('despesa'),
+                id_colaborador=item_requisicao.get('id_colaborador'),
+                status='analisando',
+            )
 
-        # Adiciona a nova solicitação à sessão do banco de dados
-        db.session.add(nova_solicitacao)
-        db.session.commit()
+            db.session.add(nova_solicitacao)
+            db.session.flush() # Para obter o ID antes do commit
+            solicitacoes_criadas.append({'id': nova_solicitacao.id, 'num_prestacao': nova_solicitacao.num_prestacao})
 
-        return jsonify({'mensagem': 'Solicitação de reembolso criada com sucesso.', 'id': nova_solicitacao.id}), 201  # Retorna o ID da solicitação criada
+        except ValueError as ve:
+            db.session.rollback()
+            erros.append({'erro': 'Erro de valor inválido ao processar uma solicitação.', 'detalhes': str(ve), 'dados_recebidos': item_requisicao})
+        except KeyError as ke:
+            db.session.rollback()
+            erros.append({'erro': 'Erro de chave não encontrada ao processar uma solicitação.', 'detalhes': str(ke), 'dados_recebidos': item_requisicao})
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            erros.append({'erro': 'Erro de banco de dados ao processar uma solicitação.', 'detalhes': str(e), 'dados_recebidos': item_requisicao})
+        except Exception as e:
+            db.session.rollback()
+            erros.append({'erro': 'Erro desconhecido ao processar uma solicitação.', 'detalhes': str(e), 'dados_recebidos': item_requisicao})
 
-    except ValueError as ve:
-        db.session.rollback()  # Rollback em caso de erro
-        return jsonify({'erro': 'Erro de valor inválido.', 'detalhes': str(ve)}), 400
-    except KeyError as ke:
-        db.session.rollback()
-        return jsonify({'erro': 'Erro de chave não encontrada.', 'detalhes': str(ke)}), 400
-    except SQLAlchemyError as e:
-        db.session.rollback()
-        return jsonify({'erro': 'Erro de banco de dados.', 'detalhes': str(e)}), 500
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'erro': 'Erro desconhecido.', 'detalhes': str(e)}), 500
+    db.session.commit()
 
+    if erros:
+        return jsonify({'mensagem': 'Algumas solicitações falharam.', 'sucesso': solicitacoes_criadas, 'falhas': erros}), 207 # Use um código de status apropriado para sucesso parcial
+    else:
+        return jsonify({'mensagem': f'{len(solicitacoes_criadas)} solicitações de reembolso criadas com sucesso.', 'solicitacoes': solicitacoes_criadas}), 201
 
 @bp_reembolso.route("/reembolsos")
 @swag_from('../docs/reembolso/listar_reembolso.yml')
