@@ -131,3 +131,37 @@ def deletar_por_id(id):
         return jsonify({'mensagem': f'Reembolso {id} deletado com sucesso'}), 200
     except Exception as error:
         return jsonify({'erro': 'Erro inesperado ao processar a requisição', 'detalhes': str(error)}), 500
+    
+@bp_reembolso.route('/atualizar/<int:num_processo>', methods=['PUT'])
+@swag_from('../docs/reembolso/atualizar_reembolso.yml')
+def atualizar_solicitacao(num_processo):
+    dados_atualizacao = request.get_json()
+
+    if not dados_atualizacao:
+        return jsonify({'mensagem': 'Dados para atualização não fornecidos.'}), 400
+
+    reembolso = db.session.get(Reembolso, num_processo)
+
+    if not reembolso:
+        return jsonify({'mensagem': f'Processo com número {num_processo} não encontrado.'}), 404
+
+    for chave, valor in dados_atualizacao.items():
+        if hasattr(reembolso, chave):
+            if chave == 'data':
+                try:
+                    setattr(reembolso, chave, datetime.datetime.strptime(valor, '%Y-%m-%d').date())
+                except ValueError:
+                    return jsonify({'erro': 'Formato de data inválido. Use o formato AAAA-MM-DD.', 'data_recebida': valor}), 400
+            else:
+                setattr(reembolso, chave, valor)
+
+    try:
+        db.session.commit()
+        db.session.refresh(reembolso)  # Recarrega a instância 'reembolso'
+        return jsonify({'mensagem': f'Dados do processo {num_processo} foi atualizado com sucesso.', 'processo': reembolso.all_data()}), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({'erro': 'Erro ao atualizar o banco de dados.', 'detalhes': str(e)}), 500
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'erro': 'Erro inesperado ao processar a requisição.', 'detalhes': str(e)}), 500
