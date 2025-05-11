@@ -32,5 +32,5 @@ parameters:
 responses:
   201:
     description: Colaborador cadastrado com sucesso.
-  400:
-    description: Erro nos dados enviados.
+  500:
+    description: Erro noo envio dos dados. Todos os campos são necessários.

@@ -22,7 +22,7 @@ parameters:
 
 responses:
   200:
-    description: Login de (nome) realizado com sucesso
+    description: Login realizado com sucesso
   404:
     description: Usuário não encontrado
   401:

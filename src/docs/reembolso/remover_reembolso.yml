@@ -12,7 +12,6 @@ parameters:
 responses:
   200:
     description: Requisição processada com sucesso.
-
   404:
     description: Reembolso não encontrado
   500:

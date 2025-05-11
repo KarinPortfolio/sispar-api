@@ -11,13 +11,10 @@ parameters:
       properties:
         nome:
           type: string
-          example: João Silva
-        email:
-          type: string
-          example: teste@email.com
+          example: João Script
         senha:
           type: string
-          example: 123
+          example: "123123"
         cargo:
           type: string
           example: Analista
@@ -25,11 +22,6 @@ parameters:
           type: number
           example: 3500.75
       required:
-        - nome
-        - email
-        - senha
-        - cargo
-        - salario
 
   - in: path
     name: id_colaborador

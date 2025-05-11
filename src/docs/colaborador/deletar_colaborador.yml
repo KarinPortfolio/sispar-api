@@ -12,8 +12,8 @@ parameters:
 
 responses:
   200:
-    description: Colaborador removido com sucesso
+    description: Colaborador removido com sucesso.
   404:
-    description: Colaborador não encontrado
+    description: Colaborador não encontrado.
   500:
-    description: Erro inesperado ao processar a requisição
+    description: Erro inesperado ao processar a requisição.

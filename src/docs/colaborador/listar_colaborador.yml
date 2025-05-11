@@ -3,6 +3,8 @@ tags:
 description: Lista os colaboradores cadastrados no sistema
 responses:
   200:
-    description: Requisição processada com sucesso
+    description: Requisição processada com sucesso.
+  404:
+    description: Lista não encontrada.
   500:
-    description: Erro inesperado ao processar a requisição
+    description: Erro inesperado ao processar a requisição.

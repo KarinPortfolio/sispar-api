@@ -67,15 +67,13 @@ parameters:
             type: string
             example: "aprovado"
 
-        required:
-          - colaborador
-          - empresa
-          - num_prestacao
-          - data
-          - tipo_reembolso
-          - centro_custo
-          - moeda
-          - valor_faturado
+  - in: path
+    name: id_colaborador
+    required: true
+    schema:
+      type: number
+    description: ID do colaborador a ser atualizado
+
 responses:
   200:
     description: Requisição processada com sucesso.
