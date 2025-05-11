@@ -70,7 +70,7 @@ def solicitar_reembolso():
 
 
 @bp_reembolso.route("/reembolsos")
-@swag_from('../docs/reembolso/listar_reembolsos.yml')
+@swag_from('../docs/reembolso/listar_reembolso.yml')
 def listar_todos_reembolsos():
     try:
         reembolsos = db.session.execute(db.select(Reembolso)).scalars().all()
