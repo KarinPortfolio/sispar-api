@@ -55,6 +55,8 @@ def cadastrar_colaborador():
         db.session.commit()
         return jsonify({'mensagem': 'Colaborador cadastrado com sucesso', 'colaborador': novo_colaborador.all_data()}), 201
 
+@bp_colaborador.route('/login', methods=['POST'])
+@swag_from('../docs/colaborador/login.yml')
 def login():
     dados_requisicao = request.get_json()
     email = dados_requisicao.get('email')

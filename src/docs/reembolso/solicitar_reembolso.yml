@@ -67,15 +67,19 @@ parameters:
             type: string
             example: "aprovado"
 
-        required:
-          - colaborador
-          - empresa
-          - num_prestacao
-          - data
-          - tipo_reembolso
-          - centro_custo
-          - moeda
-          - valor_faturado
+      required:
+        - colaborador
+        - empresa
+        - num_prestacao
+        - descricao
+        - data
+        - tipo_reembolso
+        - centro_custo
+        - ordem_interna
+        - moeda
+        - valor_faturado
+        - id_colaborador
+
 responses:
   200:
     description: Requisição processada com sucesso.
