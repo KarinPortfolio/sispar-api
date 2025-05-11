@@ -6,51 +6,11 @@ import datetime
 from sqlalchemy.exc import SQLAlchemyError
 
 bp_reembolso = Blueprint("reembolso", __name__, url_prefix="/reembolso")
-@bp_reembolso.route("/reembolsos")
-@swag_from('../docs/reembolso/listar_reembolsos.yml')
-def listar_todos_reembolsos():
-    try:
-        reembolsos = db.session.execute(db.select(Reembolso)).scalars().all()
-        print(f"Tipo de 'reembolsos': {type(reembolsos)}")
-        if reembolsos:
-            for item in reembolsos:
-                print(f"Tipo de item em 'reembolsos': {type(item)}")
-            
-            reembolsos = [reembolso.all_data() for reembolso in reembolsos]
-            return jsonify(reembolsos), 200
-        else:
-            return jsonify({'response': 'Não há reembolsos cadastrados'}), 404
-
-    except Exception as error:
-        return jsonify({'erro': 'Erro inesperado ao processar a requisição', 'detalhes': str(error)}), 500
-
-@bp_reembolso.route('/num_prestacao/<int:num_prestacao>', methods=['GET'])
-def buscar_por_nprestacao(num_prestacao):
-    try:
-        reembolsos = db.session.execute(
-            db.select(Reembolso).where(Reembolso.num_prestacao == num_prestacao)
-        ).scalars().all()
-
-        if not reembolsos:
-            return jsonify({'erro': f'Não foram encontrados reembolsos com o número de prestação: {num_prestacao}'}), 404
-
-        reembolsos_json = [reembolso.to_dict() for reembolso in reembolsos] # Use to_dict ou all_data
-        return jsonify(reembolsos_json), 200
-
-    except Exception as error:
-        return jsonify({'erro': 'Erro inesperado ao processar a requisição', 'detalhes': str(error)}), 500
 @bp_reembolso.route('/solicitacao', methods=['POST'])
 @swag_from('../docs/reembolso/solicitar_reembolso.yml')
 def solicitar_reembolso():
-    """
-    Esta rota processa solicitações de reembolso.
-
-    Retorna:
-        json: Um JSON com a mensagem de sucesso ou erro, e o código de status HTTP apropriado.
-    """
     dados_requisicao = request.get_json()
 
-    # Verifica se os dados da requisição estão presentes e completos
     if not dados_requisicao:
         return jsonify({'mensagem': 'Dados não inseridos. A requisição está vazia.'}), 400
 
@@ -61,11 +21,10 @@ def solicitar_reembolso():
         return jsonify({'mensagem': 'Dados incompletos. Preencha todos os campos obrigatórios.',
                         'campos_faltantes': campos_faltantes}), 400
 
-    try:
-        # Converte a string de data para um objeto datetime
+    try:        
         data_str = dados_requisicao.get('data')
         try:
-            data_obj = datetime.strptime(data_str, '%Y-%m-%d')  # Ajuste o formato conforme necessário
+            data_obj = datetime.datetime.strptime(data_str, '%Y-%m-%d')  # Ajuste o formato conforme necessário
         except ValueError:
             return jsonify({'erro': 'Formato de data inválido. Use o formato AAAA-MM-DD.', 'data_recebida': data_str}), 400
 
@@ -108,6 +67,41 @@ def solicitar_reembolso():
     except Exception as e:
         db.session.rollback()
         return jsonify({'erro': 'Erro desconhecido.', 'detalhes': str(e)}), 500
+
+
+@bp_reembolso.route("/reembolsos")
+@swag_from('../docs/reembolso/listar_reembolsos.yml')
+def listar_todos_reembolsos():
+    try:
+        reembolsos = db.session.execute(db.select(Reembolso)).scalars().all()
+        print(f"Tipo de 'reembolsos': {type(reembolsos)}")
+        if reembolsos:
+            for item in reembolsos:
+                print(f"Tipo de item em 'reembolsos': {type(item)}")
+            
+            reembolsos = [reembolso.all_data() for reembolso in reembolsos]
+            return jsonify(reembolsos), 200
+        else:
+            return jsonify({'response': 'Não há reembolsos cadastrados'}), 404
+
+    except Exception as error:
+        return jsonify({'erro': 'Erro inesperado ao processar a requisição', 'detalhes': str(error)}), 500
+
+@bp_reembolso.route('/num_prestacao/<int:num_prestacao>', methods=['GET'])
+def buscar_por_nprestacao(num_prestacao):
+    try:
+        reembolsos = db.session.execute(
+            db.select(Reembolso).where(Reembolso.num_prestacao == num_prestacao)
+        ).scalars().all()
+
+        if not reembolsos:
+            return jsonify({'erro': f'Não foram encontrados reembolsos com o número de prestação: {num_prestacao}'}), 404
+
+        reembolsos_json = [reembolso.to_dict() for reembolso in reembolsos] # Use to_dict ou all_data
+        return jsonify(reembolsos_json), 200
+
+    except Exception as error:
+        return jsonify({'erro': 'Erro inesperado ao processar a requisição', 'detalhes': str(error)}), 500
 
 @bp_reembolso.route('<int:id>')
 def buscar_por_id_colaborador(id):

@@ -28,6 +28,7 @@ def create_app():
     CORS(app, origins="*")
     app.register_blueprint(bp_colaborador)
     app.register_blueprint(bp_reembolso)
+
     
     app.config.from_object(Config)
     db.init_app(app)

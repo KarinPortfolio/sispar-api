@@ -4,6 +4,7 @@ from sqlalchemy import func, ForeignKey
 from sqlalchemy.types import Integer, String, DECIMAL, Date
 
 class Reembolso(db.Model):
+    __tablename__ = 'reembolso'
     id = Column(Integer, primary_key=True, autoincrement=True)
     colaborador = Column(String(100), nullable=False)
     empresa = Column(String(50), nullable=False)
@@ -64,8 +65,9 @@ def to_dict(self) -> dict:
         'status': self.status,
     }
 
-def all_data(self) -> dict:
+def all_data(self):
     return {
+        'id': self.id,
         'colaborador': self.colaborador,
         'empresa': self.empresa,
         'num_prestacao': self.num_prestacao,

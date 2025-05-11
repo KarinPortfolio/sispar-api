@@ -1,6 +1,6 @@
 tags:
   - Reembolso
-description: Listar reembolso
+description: Serve para fazer a solicitação de reembolso
 
 parameters:
   - in: body
@@ -13,59 +13,59 @@ parameters:
         properties:
           colaborador:
             type: string
-            example: 
+            example:
           empresa:
             type: string
-            example: 
+            example:
           num_prestacao:
             type: number
-            example: 
+            example:
           descricao:
             type: string
-            example: 
+            example:
           data:
             type: date
             example: 2025/01/01
           tipo_reembolso:
             type: string
-            example: 
+            example:
           centro_custo:
             type: string
-            example: 
+            example:
           ordem_interna:
             type: string
-            example: 
-            description: 
+            example:
+            description:
           divisao:
             type: string
-            example: 
-            description: 
+            example:
+            description:
           pep:
             type: string
-            example: 
+            example:
             description:
           moeda:
             type: string
-            example: 
+            example:
           distancia_km:
             type: string
-            example: 
+            example:
           valor_km:
-            type: 
+            type:
             example:
           valor_faturado:
-            type: 
+            type:
             example:
           despesa:
             type: number
-            example: 
-            description: 
+            example:
+            description:
           id_colaborador:
             type: number
-            example: 
+            example:
           status:
-            type: 
-            example: 
+            type:
+            example:
 
         required:
           - colaborador

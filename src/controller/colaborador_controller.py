@@ -6,7 +6,7 @@ from flasgger import swag_from
 
 bp_colaborador = Blueprint('colaborador', __name__, url_prefix='/colaborador')
 
-@bp_colaborador.route('/todos-colaboradores')
+@bp_colaborador.route('/todos-colaboradores', methods=['GET'])
 @swag_from('../docs/colaborador/listar_colaborador.yml')
 
 def pegar_dados_todos_colaboradores():
@@ -95,7 +95,7 @@ def atualizar_colaborador(colaborador_id):
     if 'salario' in dados_atualizacao:
         colaborador.salario = dados_atualizacao['salario']
     if 'senha' in dados_atualizacao:
-        colaborador.senha = hash_senha(dados_atualizacao['senha']) # A senha é hasheada AQUI
+        colaborador.senha = hash_senha(dados_atualizacao['senha']) 
     if 'email' in dados_atualizacao:
         colaborador.email = dados_atualizacao['email']
 

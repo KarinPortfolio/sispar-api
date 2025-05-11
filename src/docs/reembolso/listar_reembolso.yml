@@ -1,9 +1,27 @@
 tags:
-  - Reembolso
-description: Lista todos os reembolsos
-get:
+  - Reembolsos
+summary: Lista todos os reembolsos.
+description: Retorna uma lista de todos os reembolsos cadastrados.
+responses:
   200:
-    description: Requisição processada com sucesso
+    description: Requisição processada com sucesso.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: O ID do reembolso.
+              valor:
+                type: number
+                format: float
+                description: O valor do reembolso.
+              colaborador_id:
+                type: integer
+                description: O ID do colaborador associado.
   404:
     description: Reembolso não encontrado
   500:

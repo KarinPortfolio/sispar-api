@@ -1,7 +1,7 @@
 tags:
   - Colaborador
 description: Lista os colaboradores cadastrados no sistema
-get:
+responses:
   200:
     description: Requisição processada com sucesso
   500:

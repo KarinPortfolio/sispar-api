@@ -1,6 +1,6 @@
 tags:
   - Colaborador
-description: Atualiza os dados de um colaborador da base de dados
+description: Atualiza os dados de um colaborador da base de dados pelo id
 
 parameters:
   - in: path

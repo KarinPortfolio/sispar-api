@@ -1,0 +1,12 @@
+tags:
+  - Reembolsos
+summary: Atualizar a informação de um reembolso pelo número da prestação de serviço (num_pres).
+description: Atualizar reembolso.
+responses:
+  200:
+    description: Requisição processada com sucesso.
+
+  404:
+    description: Reembolso não encontrado
+  500:
+    description: Erro inesperado ao processar a requisição

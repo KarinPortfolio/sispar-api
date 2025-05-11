@@ -1,6 +1,6 @@
 tags:
   - Colaborador
-description: Autenticar e fazer login na aplicação como um colaborador
+description: Autentica e faze login na aplicação como um colaborador. É necessário para acessar o sistema.
 
 parameters:
   - in: body
@@ -12,10 +12,10 @@ parameters:
       properties:
         email:
           type: string
-          example: jojo@email.com
+          example: teste@email.com
         senha:
           type: string
-          example: senha123
+          example: 123
       required:
         - email
         - senha
