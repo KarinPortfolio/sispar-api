@@ -37,7 +37,7 @@ Sistema de Cadastro de Colaboradores:
 | POST | https://sispar-api-kh9p.onrender.com/colaborador/login | Permite login no sistema |
 
 Sistema de Cadastro de Reembolso:
-| Método | URL | Descrição |
+| Método | URL para testar no Postman| Descrição |
 | ------ | ---------------------------------------------------- | ----------------------------- |
 | POST | https://sispar-api-kh9p.onrender.com/reembolso/solicitacao | Cadastra solicitação de reembolso |
 | GET | https://sispar-api-kh9p.onrender.com/reembolso/reembolsos | Lista reembolsos |
