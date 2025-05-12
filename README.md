@@ -29,19 +29,20 @@ Documentação dos principais endpoints (incluindo método HTTP, URL, parâmetro
 Sistema de Cadastro de Colaboradores:
 | Método | URL | Descrição |
 | ------ | ---------------------------------------------------- | ----------------------------- |
-| POST | /cadastrar | Cadastra colaboradores |
-| GET | /todos-colaboradores | Lista colaboradores |
-| PUT | /atualizar/<int:colaborador_id> | Atualiza o colaborador por id |
-| DELETE | /deletar/<int:colaborador_id>| Remove o colaborador por id |
-| POST | /login | Permite login no sistema |
+| POST | /colaborador/cadastrar | Cadastra colaboradores |
+| GET | /colaborador/todos-colaboradores | Lista colaboradores |
+| PUT | /colaborador/atualizar/int:id> | Atualiza o colaborador por id |
+| DELETE | /colaborador/deletar/int:id>| Remove o colaborador por id |
+| POST | /colaborador/login | Permite login no sistema |
 
 Sistema de Cadastro de Reembolso:
 | Método | URL | Descrição |
 | ------ | ---------------------------------------------------- | ----------------------------- |
-| POST | /solicitacao | Cadastra solicitação de reembolso |
-| GET | /reembolsos | Lista reembolsos |
-| GET | /num_prestacao/<int:num_prestacao> | Busca reembolso por número de prestação de serviço |
-| DELETE | deletar/<int:id> | Remove o pedido de reembolso por id |
+| POST | /reembolso/solicitacao | Cadastra solicitação de reembolso |
+| GET | /reembolso/reembolsos | Lista reembolsos |
+| GET | /reembolso/num_prestacao/<int:num_prestacao> | Busca reembolso por número de prestação de serviço |
+| DELETE | /reembolso/deletar/<int:id> | Remove o pedido de reembolso por id |
+| PUT | /reembolso/atualizar/<int:num_processo> | Atualiza o pedido de reembolso por id |
 
 # 3. Autenticação:
 
