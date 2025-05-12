@@ -29,20 +29,21 @@ Documentação dos principais endpoints (incluindo método HTTP, URL, parâmetro
 Sistema de Cadastro de Colaboradores:
 | Método | URL | Descrição |
 | ------ | ---------------------------------------------------- | ----------------------------- |
-| POST | /colaborador/cadastrar | Cadastra colaboradores |
-| GET | /colaborador/todos-colaboradores | Lista colaboradores |
-| PUT | /colaborador/atualizar/int:id> | Atualiza o colaborador por id |
-| DELETE | /colaborador/deletar/int:id>| Remove o colaborador por id |
-| POST | /colaborador/login | Permite login no sistema |
+| POST | /https://sispar-api-kh9p.onrender.com/colaborador/cadastrar | Cadastra colaboradores |
+| GET | /https://sispar-api-kh9p.onrender.com/colaborador/todos-colaboradores | Lista colaboradores |
+| PUT | /https://sispar-api-kh9p.onrender.com/colaborador/atualizar/<id_colaborador>
+| Atualiza o colaborador por id |
+| DELETE | https://sispar-api-kh9p.onrender.com/colaborador/deletar/<id_colaborador>| Remove o colaborador por id |
+| POST | https://sispar-api-kh9p.onrender.com/colaborador/login | Permite login no sistema |
 
 Sistema de Cadastro de Reembolso:
 | Método | URL | Descrição |
 | ------ | ---------------------------------------------------- | ----------------------------- |
-| POST | /reembolso/solicitacao | Cadastra solicitação de reembolso |
-| GET | /reembolso/reembolsos | Lista reembolsos |
-| GET | /reembolso/num_prestacao/<int:num_prestacao> | Busca reembolso por número de prestação de serviço |
-| DELETE | /reembolso/deletar/<int:id> | Remove o pedido de reembolso por id |
-| PUT | /reembolso/atualizar/<int:num_processo> | Atualiza o pedido de reembolso por id |
+| POST | https://sispar-api-kh9p.onrender.com/reembolso/solicitacao | Cadastra solicitação de reembolso |
+| GET | https://sispar-api-kh9p.onrender.com/reembolso/reembolsos | Lista reembolsos |
+| GET | https://sispar-api-kh9p.onrender.com/reembolso/num_prestacao/<num_processo> | Busca reembolso por número de prestação de serviço |
+| DELETE | https://sispar-api-kh9p.onrender.com/reembolso/deletar/<num_processo> | Remove o pedido de reembolso por id |
+| PUT | https://sispar-api-kh9p.onrender.com/reembolso/atualizar/<num_processo> | Atualiza o pedido de reembolso por id |
 
 # 3. Autenticação:
 
