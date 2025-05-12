@@ -1,6 +1,6 @@
 tags:
   - Colaborador
-description: Remover um colaborador existente pelo id. A solicitação deve ser feita pelo navegador, no formato da URL. No campo {id} deve ser substituído pelo id do colaborador.
+description: Remover um colaborador existente pelo id do colaborador.
 
 parameters:
   - in: path

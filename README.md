@@ -29,21 +29,21 @@ Documentação dos principais endpoints (incluindo método HTTP, URL, parâmetro
 Sistema de Cadastro de Colaboradores:
 | Método | URL | Descrição |
 | ------ | ---------------------------------------------------- | ----------------------------- |
-| POST | https://sispar-api-kh9p.onrender.com/colaborador/cadastrar | Cadastra colaboradores |
+| POST | /colaborador/cadastrar | Cadastra colaboradores |
 | GET | https://sispar-api-kh9p.onrender.com/colaborador/todos-colaboradores | Lista colaboradores |
-| PUT | https://sispar-api-kh9p.onrender.com/colaborador/atualizar/<id_colaborador>
+| PUT | /colaborador/atualizar/<id_colaborador>
 | Atualiza o colaborador por id |
-| DELETE | https://sispar-api-kh9p.onrender.com/colaborador/deletar/<id_colaborador>| Remove o colaborador por id |
-| POST | https://sispar-api-kh9p.onrender.com/colaborador/login | Permite login no sistema |
+| DELETE | /deletar/<id_colaborador>| Remove o colaborador por id |
+| POST | /colaborador/login | Permite login no sistema |
 
 Sistema de Cadastro de Reembolso:
 | Método | URL para testar no Postman| Descrição |
 | ------ | ---------------------------------------------------- | ----------------------------- |
-| POST | https://sispar-api-kh9p.onrender.com/reembolso/solicitacao | Cadastra solicitação de reembolso |
+| POST | /reembolso/solicitacao | Cadastra solicitação de reembolso |
 | GET | https://sispar-api-kh9p.onrender.com/reembolso/reembolsos | Lista reembolsos |
 | GET | https://sispar-api-kh9p.onrender.com/reembolso/num_prestacao/<num_processo> | Busca reembolso por número de prestação de serviço |
-| DELETE | https://sispar-api-kh9p.onrender.com/reembolso/deletar/<num_processo> | Remove o pedido de reembolso por id |
-| PUT | https://sispar-api-kh9p.onrender.com/reembolso/atualizar/<num_processo> | Atualiza o pedido de reembolso por id |
+| DELETE | reembolso/deletar/<num_processo> | Remove o pedido de reembolso por id |
+| PUT | /atualizar/<num_processo> | Atualiza o pedido de reembolso por id |
 
 # 3. Autenticação:
 
