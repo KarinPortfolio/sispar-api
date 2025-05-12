@@ -1,7 +1,9 @@
 tags:
   - Reembolsos
 summary: Lista o reembolso pelo número de prestação de serviço.
-description: Reembolso pelo número de prestação. A solicitação deve ser feita pelo navegador, no formato da URL, onde {num_prestacao} deve ser substituído pelo número de prestação de serviço
+description: >
+  Reembolso pelo número de prestação. A solicitação deve ser feita pelo navegador,
+  no formato da URL, onde {num_prestacao} deve ser substituído pelo número de prestação de serviço.
 urls:
   - "https://sispar-api-kh9p.onrender.com/reembolso/num_prestacao/{num_prestacao}"
 
