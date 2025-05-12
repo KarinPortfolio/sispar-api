@@ -29,9 +29,9 @@ Documentação dos principais endpoints (incluindo método HTTP, URL, parâmetro
 Sistema de Cadastro de Colaboradores:
 | Método | URL | Descrição |
 | ------ | ---------------------------------------------------- | ----------------------------- |
-| POST | /https://sispar-api-kh9p.onrender.com/colaborador/cadastrar | Cadastra colaboradores |
-| GET | /https://sispar-api-kh9p.onrender.com/colaborador/todos-colaboradores | Lista colaboradores |
-| PUT | /https://sispar-api-kh9p.onrender.com/colaborador/atualizar/<id_colaborador>
+| POST | https://sispar-api-kh9p.onrender.com/colaborador/cadastrar | Cadastra colaboradores |
+| GET | https://sispar-api-kh9p.onrender.com/colaborador/todos-colaboradores | Lista colaboradores |
+| PUT | https://sispar-api-kh9p.onrender.com/colaborador/atualizar/<id_colaborador>
 | Atualiza o colaborador por id |
 | DELETE | https://sispar-api-kh9p.onrender.com/colaborador/deletar/<id_colaborador>| Remove o colaborador por id |
 | POST | https://sispar-api-kh9p.onrender.com/colaborador/login | Permite login no sistema |
