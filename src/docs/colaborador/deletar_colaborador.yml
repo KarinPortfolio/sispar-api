@@ -4,7 +4,7 @@ description: Remover um colaborador existente pelo id do colaborador.
 
 parameters:
   - in: path
-    name: id_colaborador
+    name: id
     required: true
     schema:
       type: number

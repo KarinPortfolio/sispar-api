@@ -11,6 +11,7 @@ bp_reembolso = Blueprint("reembolso", __name__, url_prefix="/reembolso")
 @swag_from('../docs/reembolso/solicitar_reembolso.yml')
 def solicitar_reembolso():
     dados_requisicao = request.get_json()
+    id_colaborador_padrao = int(1)  # Defina o ID do colaborador aqui
 
     if not isinstance(dados_requisicao, list):
         return jsonify({'mensagem': 'Formato de dados incorreto. Espera-se uma lista de solicitações.'}), 400
@@ -23,7 +24,7 @@ def solicitar_reembolso():
 
     for item_requisicao in dados_requisicao:
         campos_obrigatorios = ['colaborador', 'empresa', 'num_prestacao', 'data', 'tipo_reembolso',
-                                 'centro_custo', 'moeda', 'valor_faturado', 'id_colaborador'] # 'ordem_interna' removido como obrigatório no exemplo do Swagger
+                            'centro_custo', 'moeda', 'valor_faturado']  # Removi 'id_colaborador' da lista de obrigatórios
         if not all(campo in item_requisicao for campo in campos_obrigatorios):
             campos_faltantes = [campo for campo in campos_obrigatorios if campo not in item_requisicao]
             erros.append({'erro': 'Dados incompletos para uma solicitação.', 'campos_faltantes': campos_faltantes, 'dados_recebidos': item_requisicao})
@@ -35,7 +36,7 @@ def solicitar_reembolso():
                 erros.append({'erro': 'Campo "data" ausente para uma solicitação.', 'dados_recebidos': item_requisicao})
                 continue
             try:
-                data_obj = datetime.datetime.strptime(data_str, '%Y-%m-%d').date() # Alterado para .date()
+                data_obj = datetime.datetime.strptime(data_str, '%Y-%m-%d').date()
             except ValueError:
                 erros.append({'erro': 'Formato de data inválido para uma solicitação. Use AAAA-MM-DD.', 'data_recebida': data_str, 'dados_recebidos': item_requisicao})
                 continue
@@ -56,12 +57,12 @@ def solicitar_reembolso():
                 valor_km=item_requisicao.get('valor_km'),
                 valor_faturado=item_requisicao.get('valor_faturado'),
                 despesa=item_requisicao.get('despesa'),
-                id_colaborador=item_requisicao.get('id_colaborador'),
+                id_colaborador=id_colaborador_padrao, # Usando o valor pré-definido aqui
                 status='analisando',
             )
 
             db.session.add(nova_solicitacao)
-            db.session.flush() # Para obter o ID antes do commit
+            db.session.flush()
             solicitacoes_criadas.append({'id': nova_solicitacao.id, 'num_prestacao': nova_solicitacao.num_prestacao})
 
         except ValueError as ve:
@@ -80,10 +81,9 @@ def solicitar_reembolso():
     db.session.commit()
 
     if erros:
-        return jsonify({'mensagem': 'Algumas solicitações falharam.', 'sucesso': solicitacoes_criadas, 'falhas': erros}), 207 # Use um código de status apropriado para sucesso parcial
+        return jsonify({'mensagem': 'Algumas solicitações falharam.', 'sucesso': solicitacoes_criadas, 'falhas': erros}), 207
     else:
         return jsonify({'mensagem': f'{len(solicitacoes_criadas)} solicitações de reembolso criadas com sucesso.', 'solicitacoes': solicitacoes_criadas}), 201
-
 @bp_reembolso.route("/reembolsos")
 @swag_from('../docs/reembolso/listar_reembolso.yml')
 def listar_reembolso():
@@ -126,35 +126,35 @@ def buscar_por_id_colaborador(id):
     except Exception as error:
         return jsonify({'error': 'Erro inesperado ao processar a requisição ', 'detalhes': str(error)}), 500
 
-@bp_reembolso.route('deletar/<int:num_processo>', methods=['DELETE'])
+@bp_reembolso.route('deletar/<int:num_prestacao>', methods=['DELETE'])
 @swag_from('../docs/reembolso/remover_reembolso.yml')
-def deletar_por_num_p(num_processo):
+def deletar_por_num_p(num_prestacao):
     try:
         reembolso = db.session.execute(
-            db.select(Reembolso).where(Reembolso.num_prestacao == num_processo)
+            db.select(Reembolso).where(Reembolso.num_prestacao == num_prestacao)
         ).scalar()
 
         db.session.delete(reembolso)
         db.session.commit()
 
-        return jsonify({'mensagem': f'Reembolso {num_processo} deletado com sucesso'}), 200
+        return jsonify({'mensagem': f'Reembolso {num_prestacao} deletado com sucesso'}), 200
     except Exception as error:
         return jsonify({'erro': 'Erro inesperado ao processar a requisição', 'detalhes': str(error)}), 500
     
-@bp_reembolso.route('/atualizar/<int:num_processo>', methods=['PUT'])
+@bp_reembolso.route('/atualizar/<int:num_prestacao>', methods=['PUT'])
 @swag_from('../docs/reembolso/atualizar_reembolso.yml')
-def atualizar_solicitacao(num_processo):
+def atualizar_solicitacao(num_prestacao):
     dados_atualizacao = request.get_json()
 
     if not dados_atualizacao:
         return jsonify({'mensagem': 'Dados para atualização não fornecidos.'}), 400
 
     reembolso = db.session.execute(
-        select(Reembolso).where(Reembolso.num_prestacao == num_processo)  # Use select e where
+        select(Reembolso).where(Reembolso.num_prestacao == num_prestacao)  # Use select e where
     ).scalar_one_or_none()
 
     if not reembolso:
-        return jsonify({'mensagem': f'Processo com número {num_processo} não encontrado.'}), 404
+        return jsonify({'mensagem': f'Processo com número {num_prestacao} não encontrado.'}), 404
 
     for chave, valor in dados_atualizacao.items():
         if hasattr(reembolso, chave):
@@ -169,7 +169,7 @@ def atualizar_solicitacao(num_processo):
     try:
         db.session.commit()
         db.session.refresh(reembolso)
-        return jsonify({'mensagem': f'Dados do processo {num_processo} foi atualizado com sucesso.', 'processo': reembolso.to_dict()}), 200
+        return jsonify({'mensagem': f'Dados do processo {num_prestacao} foi atualizado com sucesso.', 'processo': reembolso.to_dict()}), 200
     except SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({'erro': 'Erro ao atualizar o banco de dados.', 'detalhes': str(e)}), 500

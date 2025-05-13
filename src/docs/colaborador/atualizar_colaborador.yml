@@ -4,7 +4,7 @@ description: Atualiza os dados de um colaborador da base de dados pelo id
 
 parameters:
   - in: path
-    name: id_colaborador
+    name: id
     required: true
     schema:
       type: number
