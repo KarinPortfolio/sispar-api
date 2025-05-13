@@ -31,8 +31,7 @@ Sistema de Cadastro de Colaboradores:
 | ------ | ---------------------------------------------------- | ----------------------------- |
 | POST | /colaborador/cadastrar | Cadastra colaboradores |
 | GET | https://sispar-api-kh9p.onrender.com/colaborador/todos-colaboradores | Lista colaboradores |
-| PUT | /colaborador/atualizar/<id_colaborador>
-| Atualiza o colaborador por id |
+| PUT | /colaborador/atualizar/<id_colaborador> | Atualiza o colaborador por id |
 | DELETE | /deletar/<id_colaborador>| Remove o colaborador por id |
 | POST | /colaborador/login | Permite login no sistema |
 
@@ -53,19 +52,19 @@ Sistema de Cadastro de Reembolso:
 
 1- Copie o código na máquina local
 
-2- Inicia o ambiente virtual (venv)\
+2- Inicie o ambiente virtual (venv)\
 `python3 -m venv venv`
 
-3- Ativa o ambiente virtual\
+3- Ative o ambiente virtual\
 Linux:\
 `source venv/bin/activate`\
 Windows:\
 `venv/Scripts/activate`
 
-4- Instala as dependências para o projeto\
+4- Instale as dependências para o projeto\
 `pip install -r requirements.txt`
 
-5- Executa o flask\
+5- Execute o flask\
 `python run.py`
 
 7- acesse o link pelo navegador para acessar as rotas do Swegger\
