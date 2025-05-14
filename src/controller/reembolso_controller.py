@@ -79,7 +79,7 @@ def solicitar_reembolso():
         db.session.commit()
 
     if erros:
-        return jsonify({'mensagem': 'Algumas solicitações falharam.', 'sucesso': solicitacoes_criadas, 'falhas': erros}), 207
+        return jsonify({'mensagem': 'Algumas solicitações falharam.', 'sucesso': solicitacoes_criadas, 'falhas': erros}), 409
     else:
         return jsonify({'mensagem': f'{len(solicitacoes_criadas)} solicitações de reembolso criadas com sucesso.', 'solicitacoes': solicitacoes_criadas}), 201
 @bp_reembolso.route("/reembolsos")

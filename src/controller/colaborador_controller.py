@@ -37,7 +37,7 @@ def cadastrar_colaborador():
     ).scalar_one_or_none():
 
         print('Usuário já existe')
-        return jsonify({'mensagem': 'Email já existe.'}), 500
+        return jsonify({'mensagem': 'Email já existe.'}), 409
     else:
         senha_str = str(dados_requisicao['senha'])
         senha_hash = hash_senha(senha_str) 
@@ -74,7 +74,7 @@ def login():
     senha_fornecida_bytes = senha_fornecida.encode('utf-8')
 
     if bcrypt.checkpw(senha_fornecida_bytes, senha_hash_armazenado):
-        return jsonify({'mensagem': 'Login realizado com sucesso.'}), 200
+        return jsonify({'mensagem': 'Login realizado com sucesso.'}), 201
     else:
         return jsonify({'mensagem': 'Credenciais inválidas.'}), 401
 
