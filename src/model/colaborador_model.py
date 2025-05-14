@@ -35,3 +35,4 @@ class Colaborador(db.Model):
             'cargo': self.cargo,
             'salario': str(self.salario) # Converta para string para serialização JSON
         }
+        

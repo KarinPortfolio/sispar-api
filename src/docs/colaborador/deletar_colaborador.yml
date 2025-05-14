@@ -1,19 +1,19 @@
 tags:
   - Colaborador
-description: Remover um colaborador existente
+description: Remover um colaborador existente pelo id
 
 parameters:
   - in: path
-    name: id_colaborador
+    name: id
     required: true
     schema:
       type: number
     description: ID do colaborador a ser deletado
 
-delete:
+responses:
   200:
-    description: Colaborador removido com sucesso
+    description: Colaborador removido com sucesso.
   404:
-    description: Colaborador não encontrado
+    description: Colaborador não encontrado.
   500:
-    description: Erro inesperado ao processar a requisição
+    description: Erro inesperado ao processar a requisição.

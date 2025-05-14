@@ -1,0 +1,164 @@
+tags:
+  - Reembolso
+summary: Cria uma solicitação de reembolso
+description: Fazer a solicitação de reembolso
+parameters:
+  - in: body
+    name: corpo
+    required: true
+    schema:
+      type: array
+      items: # Especifica o esquema para cada item do array
+        type: object
+        properties:
+          colaborador:
+            type: string
+            example: "Zeca Samba"
+          empresa:
+            type: string
+            example: "Ze Caçamba"
+          num_prestacao:
+            type: number
+            example: 15
+          descricao:
+            type: string
+            example: "festa de confraternização"
+          data:
+            type: string
+            format: date
+            example: "2025-01-25"
+          tipo_reembolso:
+            type: string
+            example: "1"
+          centro_custo:
+            type: string
+            example: "2"
+          ordem_interna:
+            type: string
+            example: "123"
+            description: "Descrição da ordem interna"
+          divisao:
+            type: string
+            example: "2"
+          pep:
+            type: string
+            example: "5"
+            description: "Descrição do PEP"
+          moeda:
+            type: string
+            example: "real"
+          distancia_km:
+            type: string
+            example: "10"
+          valor_km:
+            type: string
+            example: "5.00"
+          valor_faturado:
+            type: string
+            example: "100.00"
+          despesa:
+            type: number
+            example: 200
+            description: "Despesa total"
+          id_colaborador:
+            type: number
+            example: 2
+        required:
+          - colaborador
+          - empresa
+          - num_prestacao
+          - data
+          - tipo_reembolso
+          - centro_custo
+          - moeda
+          - valor_faturado
+          - id_colaborador
+
+responses:
+  201: # Código de status para criação bem-sucedida (mais apropriado que 200 para POST de criação)
+    description: Solicitações de reembolso criadas com sucesso.
+    schema:
+      type: object
+      properties:
+        mensagem:
+          type: string
+          example: "2 solicitações de reembolso criadas com sucesso."
+        solicitacoes:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              num_prestacao:
+                type: number
+                example: 15
+  207: # Código de status para Multi-Status (algumas solicitações podem ter falhado)
+    description: Algumas solicitações falharam.
+    schema:
+      type: object
+      properties:
+        mensagem:
+          type: string
+          example: "Algumas solicitações falharam."
+        sucesso:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              num_prestacao:
+                type: number
+                example: 15
+        falhas:
+          type: array
+          items:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: "O número de prestação 15 já existe."
+              dados_recebidos:
+                type: object
+                # ... (adicione aqui o esquema dos dados recebidos na falha, se desejar)
+  400:
+    description: Formato de dados incorreto ou nenhuma solicitação fornecida.
+    schema:
+      type: object
+      properties:
+        mensagem:
+          type: string
+          example: "Formato de dados incorreto. Espera-se uma lista de solicitações."
+  409:
+    description: Conflito - Número de prestação já existe.
+    schema:
+      type: object
+      properties:
+        mensagem:
+          type: string
+          example: "O número de prestação já existe."
+        falhas: # Opcional: pode incluir detalhes das solicitações que falharam
+          type: array
+          items:
+            type: object
+            properties:
+              erro:
+                type: string
+                example: "O número de prestação 15 já existe."
+              dados_recebidos:
+                type: object
+                # ... (adicione aqui o esquema dos dados recebidos na falha, se desejar)
+  500:
+    description: Erro inesperado ao processar a requisição
+    schema:
+      type: object
+      properties:
+        erro:
+          type: string
+          example: "Erro inesperado ao processar a requisição"
+        detalhes:
+          type: string
+          example: "Detalhes do erro interno do servidor."

@@ -7,12 +7,13 @@ from flask_cors import CORS
 from flasgger import Swagger
 from flask_sqlalchemy import SQLAlchemy
 
+    
 Swagger_config = {
     "headers": [],
     "specs": [
         {
             "endpoint": 'apispec',
-            "route": '/apispec.json/',
+            "route": '/apispec.json',
             "rule_filter": lambda rule: True,
             "model_filter": lambda tag: True
         }
@@ -28,6 +29,7 @@ def create_app():
     CORS(app, origins="*")
     app.register_blueprint(bp_colaborador)
     app.register_blueprint(bp_reembolso)
+
     
     app.config.from_object(Config)
     db.init_app(app)
@@ -35,4 +37,5 @@ def create_app():
     with app.app_context():
         db.create_all()
     Swagger(app, config=Swagger_config)
+    
     return app

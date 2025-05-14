@@ -1,0 +1,12 @@
+tags:
+  - Reembolso
+summary: Lista todos os reembolso pelo id do colaborador.
+description: Retorna uma lista de todos os reembolsos cadastrados.
+responses:
+  200:
+    description: Requisição processada com sucesso.
+
+  404:
+    description: Reembolso não encontrado
+  500:
+    description: Erro inesperado ao processar a requisição

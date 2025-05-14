@@ -1,8 +1,14 @@
-from flask_bcrypt import bcrypt
+import bcrypt
 
 def hash_senha(senha):
-    salt = bcrypt.gensalt() # Adiciona caracteres a mais para mesclar na senha
-    return bcrypt.hashpw(senha.encode('utf-8'), salt) # Encode transforma em String PRECISA ser desta forma
+    """Hashea a senha usando bcrypt."""
+    senha_bytes = senha.encode('utf-8')
+    salt = bcrypt.gensalt()
+    senha_hash = bcrypt.hashpw(senha_bytes, salt).decode('utf-8')
+    return senha_hash
 
-def checar_senha(senha, senha_hash):
-    return bcrypt.checkpw(senha.encode('utf-8'), senha_hash.encode('utf-8')) # Encode transforma em String PRECISA ser desta forma
+def checar_senha(senha_texto_plano, senha_hash_armazenado):
+    """Verifica se a senha em texto plano corresponde ao hash armazenado."""
+    senha_bytes = senha_texto_plano.encode('utf-8')
+    senha_hash_bytes = senha_hash_armazenado.encode('utf-8')
+    return bcrypt.checkpw(senha_bytes, senha_hash_bytes)

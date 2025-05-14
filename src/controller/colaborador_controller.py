@@ -1,14 +1,14 @@
 from flask import Blueprint, jsonify, request
 from src.model.colaborador_model import Colaborador
 from src.model import db
-from src.security.security import checar_senha, hash_senha
+from src.security.security import checar_senha, hash_senha  
 from flasgger import swag_from
+import bcrypt  
 
 bp_colaborador = Blueprint('colaborador', __name__, url_prefix='/colaborador')
 
-@bp_colaborador.route('/todos-colaboradores')
+@bp_colaborador.route('/todos-colaboradores', methods=['GET'])
 @swag_from('../docs/colaborador/listar_colaborador.yml')
-
 def pegar_dados_todos_colaboradores():
     try:
         colaboradores = db.session.execute(
@@ -25,7 +25,6 @@ def pegar_dados_todos_colaboradores():
 
 @bp_colaborador.route('/cadastrar', methods=['POST'])
 @swag_from('../docs/colaborador/cadastrar_colaborador.yml')
-
 def cadastrar_colaborador():
     dados_requisicao = request.get_json()
 
@@ -35,13 +34,18 @@ def cadastrar_colaborador():
     email = dados_requisicao.get('email')
     if colaborador_existente := db.session.execute(
         db.select(Colaborador).where(Colaborador.email == email)
-    ).scalar():
-        return jsonify({'mensagem': 'Email já existe.'}), 500
+    ).scalar_one_or_none():
+
+        print('Usuário já existe')
+        return jsonify({'mensagem': 'Email já existe.'}), 409
     else:
+        senha_str = str(dados_requisicao['senha'])
+        senha_hash = hash_senha(senha_str) 
+
         novo_colaborador = Colaborador(
             nome=dados_requisicao.get('nome'),
             email=dados_requisicao.get('email'),
-            senha=hash_senha(dados_requisicao['senha']), # A senha é hasheada AQUI
+            senha=senha_hash,
             cargo=dados_requisicao.get('cargo'),
             salario=dados_requisicao.get('salario')
         )
@@ -49,42 +53,43 @@ def cadastrar_colaborador():
         db.session.commit()
         return jsonify({'mensagem': 'Colaborador cadastrado com sucesso', 'colaborador': novo_colaborador.all_data()}), 201
 
-
 @bp_colaborador.route('/login', methods=['POST'])
 @swag_from('../docs/colaborador/login.yml')
 def login():
     dados_requisicao = request.get_json()
     email = dados_requisicao.get('email')
-    senha = dados_requisicao.get('senha')
+    senha_fornecida = str(dados_requisicao.get('senha'))
 
-    if not email or not senha:
+    if not email or not senha_fornecida:
         return jsonify({'mensagem': 'Email e senha são obrigatórios'}), 400
 
     colaborador = db.session.execute(
         db.select(Colaborador).where(Colaborador.email == email)
-    ).scalar()
+    ).scalar_one_or_none()
 
     if not colaborador:
         return jsonify({'mensagem': 'Usuário não encontrado'}), 404
 
-    if checar_senha(senha, colaborador.senha):
-        return jsonify({'mensagem': 'Login realizado com sucesso.'}), 200
+    senha_hash_armazenado = colaborador.senha.encode('utf-8')
+    senha_fornecida_bytes = senha_fornecida.encode('utf-8')
+
+    if bcrypt.checkpw(senha_fornecida_bytes, senha_hash_armazenado):
+        return jsonify({'mensagem': 'Login realizado com sucesso.'}), 201
     else:
         return jsonify({'mensagem': 'Credenciais inválidas.'}), 401
 
-
-@bp_colaborador.route('/atualizar/<int:colaborador_id>', methods=['PUT'])
+@bp_colaborador.route('/atualizar/<int:id>', methods=['PUT'])
 @swag_from('../docs/colaborador/atualizar_colaborador.yml')
-def atualizar_colaborador(colaborador_id):
+def atualizar_colaborador(id):
     dados_atualizacao = request.get_json()
 
     if not dados_atualizacao:
         return jsonify({'mensagem': 'Dados para atualização não fornecidos.'}), 400
 
-    colaborador = db.session.get(Colaborador, colaborador_id)
+    colaborador = db.session.get(Colaborador, id)
 
     if not colaborador:
-        return jsonify({'mensagem': f'Colaborador com ID {colaborador_id} não encontrado.'}), 404
+        return jsonify({'mensagem': f'Colaborador com ID {id} não encontrado.'}), 404
 
     if 'nome' in dados_atualizacao:
         colaborador.nome = dados_atualizacao['nome']
@@ -93,21 +98,21 @@ def atualizar_colaborador(colaborador_id):
     if 'salario' in dados_atualizacao:
         colaborador.salario = dados_atualizacao['salario']
     if 'senha' in dados_atualizacao:
-        colaborador.senha = hash_senha(dados_atualizacao['senha']) # A senha é hasheada AQUI
+        colaborador.senha = hash_senha(dados_atualizacao['senha']) 
     if 'email' in dados_atualizacao:
         colaborador.email = dados_atualizacao['email']
 
     db.session.commit()
-    return jsonify({'mensagem': f'Dados do colaborador com ID {colaborador_id} atualizado com sucesso.', 'colaborador': colaborador.all_data()}), 200
+    return jsonify({'mensagem': f'Dados do colaborador com ID {id} atualizado com sucesso.', 'colaborador': colaborador.all_data()}), 200
 
-@bp_colaborador.route('/deletar/<int:colaborador_id>', methods=['DELETE'])
+@bp_colaborador.route('/deletar/<int:id>', methods=['DELETE'])
 @swag_from('../docs/colaborador/deletar_colaborador.yml')
-def deletar_colaborador(colaborador_id):
-    colaborador = db.session.get(Colaborador, colaborador_id)
+def deletar_colaborador(id):
+    colaborador = db.session.get(Colaborador, id)
 
     if not colaborador:
-        return jsonify({'mensagem': f'Colaborador com ID {colaborador_id} não encontrado.'}), 404
+        return jsonify({'mensagem': f'Colaborador com ID {id} não encontrado.'}), 404
 
     db.session.delete(colaborador)
     db.session.commit()
-    return jsonify({'mensagem': f'Colaborador com ID {colaborador_id} deletado com sucesso.'}), 200
+    return jsonify({'mensagem': f'Colaborador com ID {id} deletado com sucesso.'}), 200

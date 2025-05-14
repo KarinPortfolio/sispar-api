@@ -1,0 +1,48 @@
+/colaborador/atualizar/<int:id>:
+  endpoint: colaborador.atualizar_colaborador
+  methods:
+  - PUT
+/colaborador/cadastrar:
+  endpoint: colaborador.cadastrar_colaborador
+  methods:
+  - POST
+/colaborador/deletar/<int:id>:
+  endpoint: colaborador.deletar_colaborador
+  methods:
+  - DELETE
+/colaborador/login:
+  endpoint: colaborador.login
+  methods:
+  - POST
+/colaborador/todos-colaboradores:
+  endpoint: colaborador.pegar_dados_todos_colaboradores
+  methods:
+  - GET
+  - HEAD
+/reembolso/<int:id>:
+  endpoint: reembolso.buscar_por_id_colaborador
+  methods:
+  - GET
+  - HEAD
+/reembolso/atualizar/<int:num_processo>:
+  endpoint: reembolso.atualizar_solicitacao
+  methods:
+  - PUT
+/reembolso/deletar/<int:num_processo>:
+  endpoint: reembolso.deletar_por_num_p
+  methods:
+  - DELETE
+/reembolso/num_prestacao/<int:num_prestacao>:
+  endpoint: reembolso.buscar_por_nprestacao
+  methods:
+  - GET
+  - HEAD
+/reembolso/reembolsos:
+  endpoint: reembolso.listar_reembolso
+  methods:
+  - GET
+  - HEAD
+/reembolso/solicitacao:
+  endpoint: reembolso.solicitar_reembolso
+  methods:
+  - POST
