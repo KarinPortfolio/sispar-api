@@ -7,6 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 
 bp_reembolso = Blueprint("reembolso", __name__, url_prefix="/reembolso")
+
 @bp_reembolso.route('/solicitacao', methods=['POST'])
 @swag_from('../docs/reembolso/solicitar_reembolso.yml')
 def solicitar_reembolso():
@@ -24,13 +25,22 @@ def solicitar_reembolso():
 
     for item_requisicao in dados_requisicao:
         campos_obrigatorios = ['colaborador', 'empresa', 'num_prestacao', 'data', 'tipo_reembolso',
-                            'centro_custo', 'moeda', 'valor_faturado']  # Removi 'id_colaborador' da lista de obrigatórios
+                              'centro_custo', 'moeda', 'valor_faturado']  # Removi 'id_colaborador' da lista de obrigatórios
         if not all(campo in item_requisicao for campo in campos_obrigatorios):
             campos_faltantes = [campo for campo in campos_obrigatorios if campo not in item_requisicao]
             erros.append({'erro': 'Dados incompletos para uma solicitação.', 'campos_faltantes': campos_faltantes, 'dados_recebidos': item_requisicao})
             continue
 
-        try:
+        num_prestacao = item_requisicao.get('num_prestacao')
+        reembolso_existente = db.session.execute(
+            db.select(Reembolso).where(Reembolso.num_prestacao == num_prestacao)
+        ).scalar_one_or_none()
+
+        if reembolso_existente:
+            erros.append({'erro': f'O número de prestação {num_prestacao} já existe.', 'dados_recebidos': item_requisicao})
+            continue
+
+        else:
             data_str = item_requisicao.get('data')
             if not data_str:
                 erros.append({'erro': 'Campo "data" ausente para uma solicitação.', 'dados_recebidos': item_requisicao})
@@ -44,7 +54,7 @@ def solicitar_reembolso():
             nova_solicitacao = Reembolso(
                 colaborador=item_requisicao.get('colaborador'),
                 empresa=item_requisicao.get('empresa'),
-                num_prestacao=item_requisicao.get('num_prestacao'),
+                num_prestacao=num_prestacao,
                 descricao=item_requisicao.get('descricao'),
                 data=data_obj,
                 tipo_reembolso=item_requisicao.get('tipo_reembolso'),
@@ -65,20 +75,8 @@ def solicitar_reembolso():
             db.session.flush()
             solicitacoes_criadas.append({'id': nova_solicitacao.id, 'num_prestacao': nova_solicitacao.num_prestacao})
 
-        except ValueError as ve:
-            db.session.rollback()
-            erros.append({'erro': 'Erro de valor inválido ao processar uma solicitação.', 'detalhes': str(ve), 'dados_recebidos': item_requisicao})
-        except KeyError as ke:
-            db.session.rollback()
-            erros.append({'erro': 'Erro de chave não encontrada ao processar uma solicitação.', 'detalhes': str(ke), 'dados_recebidos': item_requisicao})
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            erros.append({'erro': 'Erro de banco de dados ao processar uma solicitação.', 'detalhes': str(e), 'dados_recebidos': item_requisicao})
-        except Exception as e:
-            db.session.rollback()
-            erros.append({'erro': 'Erro desconhecido ao processar uma solicitação.', 'detalhes': str(e), 'dados_recebidos': item_requisicao})
-
-    db.session.commit()
+    if solicitacoes_criadas:
+        db.session.commit()
 
     if erros:
         return jsonify({'mensagem': 'Algumas solicitações falharam.', 'sucesso': solicitacoes_criadas, 'falhas': erros}), 207

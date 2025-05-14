@@ -1,19 +1,28 @@
 tags:
   - Colaborador
-description: Remover um colaborador existente pelo id do colaborador.
-
-parameters:
-  - in: path
-    name: id
-    required: true
-    schema:
-      type: number
-    description: ID do colaborador a ser deletado
-
+summary: Lista todos os reembolsos.
+description: Retorna uma lista de todos os reembolsos cadastrados.
 responses:
   200:
-    description: Colaborador removido com sucesso.
+    description: Requisição processada com sucesso.
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                description: O número do processo de reembolso.
+              valor:
+                type: number
+                format: float
+                description: O valor do reembolso.
+              colaborador_id:
+                type: integer
+                description: O ID do colaborador associado.
   404:
-    description: Colaborador não encontrado.
+    description: Reembolso não encontrado
   500:
-    description: Erro inesperado ao processar a requisição.
+    description: Erro inesperado ao processar a requisição

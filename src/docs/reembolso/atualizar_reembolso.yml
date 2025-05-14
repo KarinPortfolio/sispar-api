@@ -1,84 +1,115 @@
 tags:
-  - Reembolsos
+  - Reembolso
 summary: Atualizar a informação de um reembolso pelo número da prestação de serviço (num_pres).
 description: Atualizar alguma informação no reembolso.
 parameters:
+  - in: path
+    name: num_prestacao
+    required: true
+    schema:
+      type: integer
+    description: Informe o número da prestação do reembolso a ser atualizado.
   - in: body
     name: corpo
     required: true
     schema:
-      type: array
-      items:
-        type: object
-        properties:
-          colaborador:
-            type: string
-            example: "Zeca Samba"
-          empresa:
-            type: string
-            example: "Ze Caçamba"
-          num_prestacao:
-            type: number
-            example: "15"
-          descricao:
-            type: string
-            example: "remoção de entulho"
-          data:
-            type: date
-            example: 2025/01/25
-          tipo_reembolso:
-            type: string
-            example: "1"
-          centro_custo:
-            type: string
-            example: "2"
-          ordem_interna:
-            type: string
-            example: "123"
-            description:
-          divisao:
-            type: string
-            example: "2"
-            description:
-          pep:
-            type: string
-            example: "5"
-            description:
-          moeda:
-            type: string
-            example: "real"
-          distancia_km:
-            type: string
-            example: "10"
-          valor_km:
-            type: string
-            example: "5.00"
-          valor_faturado:
-            type: string
-            example: "100.00"
-          despesa:
-            type: number
-            example: 200
-            description: "Despesa total"
-          id_colaborador:
-            type: number
-            example: 2
-          status:
-            type: string
-            example: "aprovado"
-
-  - in: path
-    name: id_colaborador
-    required: true
-    schema:
-      type: number
-    description: ID do colaborador a ser atualizado
+      type: object
+      properties:
+        colaborador:
+          type: string
+          example: "Zeca Samba"
+        empresa:
+          type: string
+          example: "Ze Caçamba"
+        descricao:
+          type: string
+          example: "remoção de entulho"
+        data:
+          type: string
+          format: date
+          example: "2025-01-25" # Correção: formato de data padrão é AAAA-MM-DD
+        tipo_reembolso:
+          type: string
+          example: "1"
+        centro_custo:
+          type: string
+          example: "2"
+        ordem_interna:
+          type: string
+          example: "123"
+          description: "Descrição da ordem interna"
+        divisao:
+          type: string
+          example: "2"
+          description: "Divisão"
+        pep:
+          type: string
+          example: "5"
+          description: "PEP"
+        moeda:
+          type: string
+          example: "real"
+        distancia_km:
+          type: string
+          example: "10"
+        valor_km:
+          type: string
+          example: "5.00"
+        valor_faturado:
+          type: string
+          example: "100.00"
+        despesa:
+          type: number
+          example: 200
+          description: "Despesa total"
+        id_colaborador:
+          type: integer
+          example: 2
 
 responses:
   200:
-    description: Requisição processada com sucesso.
+    description: Reembolso atualizado com sucesso.
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            mensagem:
+              type: string
+              example: "Reembolso com número de prestação 15 atualizado com sucesso."
+            reembolso:
+              type: object
 
+  400:
+    description: Requisição inválida - Formato do corpo incorreto ou dados inválidos.
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            mensagem:
+              type: string
+              example: "Erro na requisição: Formato do corpo inválido."
   404:
-    description: Reembolso não encontrado
+    description: Reembolso não encontrado.
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            mensagem:
+              type: string
+              example: "Reembolso com número de prestação X não encontrado."
   500:
-    description: Erro inesperado ao processar a requisição
+    description: Erro inesperado ao processar a requisição.
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            erro:
+              type: string
+              example: "Erro inesperado no servidor."
+            detalhes:
+              type: string
+              example: "Informações detalhadas sobre o erro."
